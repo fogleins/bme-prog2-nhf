@@ -11,7 +11,8 @@ class Collection {
     int entries; /**< A tárolt filmek száma */
     Movie* movies[]; /**< A tárolt filmek pointereit tároló tömb */
 public:
-    Movie();
+    /**/
+
 
 };
 
