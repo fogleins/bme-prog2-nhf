@@ -23,13 +23,15 @@ class Family : public Movie {
 public:
     /** A család osztály konstruktora
      *
-     * @param t A film címe
-     * @param rt A film hossza percben
-     * @param ry A film megjelenési éve
-     * @param r A film korhatár-besorolása
+     * @param title A film címe
+     * @param runningTime A film hossza percben
+     * @param releaseYear A film megjelenési éve
+     * @param rating A film korhatár-besorolása
      */
     Family(const string& title, unsigned int runningTime, unsigned int releaseYear, Rating rating)
-        : Movie(title, runningTime, releaseYear, category = Family), ageRating(rating) { }
+        : Movie(title, runningTime, releaseYear, FamilyE), ageRating(rating) { }
+    Family& operator=(Family& rhs);
+    bool operator==(Family& rhs);
 };
 
 

@@ -11,9 +11,9 @@ using namespace std;
 
 /** A film lehetséges típusai */
 enum Category {
-    Family, /**< Családi film */
-    Documentary, /**< Dokumentumfilm */
-    Other /**< Egyéb film */
+    FamilyE, /**< Családi film */
+    DocumentaryE, /**< Dokumentumfilm */
+    OtherE /**< Egyéb film */
 };
 
 class Movie {
@@ -25,14 +25,15 @@ protected:
 public:
     /** A film osztály konstruktora
      *
-     * @param t A film címe
-     * @param rt A film hossza percben
-     * @param ry A film megjelenési éve
+     * @param title A film címe
+     * @param runningTime A film hossza percben
+     * @param releaseYear A film megjelenési éve
      * @param category A film típusa
      */
-    Movie(const string& t, unsigned int rt, unsigned int ry, Category category)
-        : title(t), runningTime(rt), releaseYear(ry), category(category) { }
-
+    Movie(const string& title, unsigned int runningTime, unsigned int releaseYear, Category category = OtherE)
+        : title(title), runningTime(runningTime), releaseYear(releaseYear), category(category) { }
+    Movie& operator=(Movie& rhs);
+    bool operator==(Movie& rhs);
 
 };
 

@@ -12,13 +12,15 @@ class Documentary : public Movie {
 public:
     /** A dokumentumfilm osztály konstruktora
      *
-     * @param t A film címe
-     * @param rt A film hossza percben
-     * @param ry A film kiadásának éve
-     * @param d A film rövid leírása
+     * @param title A film címe
+     * @param runningTime A film hossza percben
+     * @param releaseYear A film kiadásának éve
+     * @param description A film rövid leírása
      */
-    Documentary(const string& title, unsigned int runningTime, unsigned int releaseYear, string description)
-        : Movie(title, runningTime, releaseYear, category = Documentary), description(description) { }
+    Documentary(const string& title, unsigned int runningTime, unsigned int releaseYear, const string& description)
+        : Movie(title, runningTime, releaseYear, DocumentaryE), description(description) { }
+    Documentary& operator=(Documentary& rhs);
+    bool operator==(Documentary& rhs);
 };
 
 
