@@ -11,14 +11,14 @@
 class Collection {
     Data movies; /**< A tárolt filmek pointereit tároló tömb */
 public:
-    bool add();
+    void add(Movie& mv);
     void print();
-    void find(const char* keyword);
+    void search(const char* keyword);
     // TODO
-    /** Egy vagy az összes elem törlése */
-    bool clear();
-
-
+    /** Egy elem törlése */
+    void clear(int id);
+    /** Az összes elem törlése */
+    void clear();
 };
 
 

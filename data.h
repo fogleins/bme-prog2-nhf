@@ -5,32 +5,42 @@
 #ifndef FILMTAR_DATA_H
 #define FILMTAR_DATA_H
 
+#include <iostream>
+
 #include "movie.h"
 
 class Data {
     int elementCount;
     Movie* array;
 public:
-    Data();
-    ~Data();
-    /**
+    Data() {
+        elementCount = 0;
+        array = new Movie[100]; // TODO: Mekkora mérettel inicializálódjon?
+    }
+    /** Destruktor */
+    ~Data() {
+        delete[] array;
+    }
+    /** Getter függvény az elementCount értékének visszaadására
      *
      * @return A tárolt elemek száma
      */
-    int getElementCount();
+    int getElementCount() {
+        return elementCount;
+    }
     // TODO
     /** Elem felvétele a tömbbe
-     * @return true, ha sikerült felvenni
+     * ha nem sikerült a foglalás / felszabadítás, kivételt dob
      */
-    bool addElement();
-    bool removeElement();
+    void addElement(Movie& movieToAdd);
+    void removeElement(int id);
     // TODO
     /** Korábban létrehozott gyűjtemény betöltése fájlból
      *
      * @return true, ha sikeres volt a beolvasás
      */
-    bool fromFile();
-    Movie operator[](Movie& mv);
+    void open(const char* path);
+    Movie& operator[](unsigned int index);
 };
 
 

@@ -29,9 +29,16 @@ public:
      * @param rating A film korhatár-besorolása
      */
     Family(const string& title, unsigned int runningTime, unsigned int releaseYear, Rating rating)
-        : Movie(title, runningTime, releaseYear, FamilyE), ageRating(rating) { }
-    Family& operator=(Family& rhs);
-    bool operator==(Family& rhs);
+        : Movie(c.movies.getElementCount() + 1, title, runningTime, releaseYear, FamilyE), ageRating(rating) { }
+    /** Getter függvény a korhatár-besorolás visszaadására
+     *
+     * @return A film korhatár-besorolása
+     */
+    Rating getAgeRating() {
+        return ageRating;
+    }
+    Family& operator=(const Family& rhs);
+    bool operator==(const Family& rhs);
 };
 
 

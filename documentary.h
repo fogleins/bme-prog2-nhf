@@ -18,9 +18,17 @@ public:
      * @param description A film rövid leírása
      */
     Documentary(const string& title, unsigned int runningTime, unsigned int releaseYear, const string& description)
-        : Movie(title, runningTime, releaseYear, DocumentaryE), description(description) { }
-    Documentary& operator=(Documentary& rhs);
-    bool operator==(Documentary& rhs);
+        : Movie(c.movies.getElementCount() + 1, title, runningTime, releaseYear, DocumentaryE),
+        description(description) { }
+    /** Getter függvény a leírás visszaadására
+     *
+     * @return A dokumentumfilm leírása
+     */
+    string getDescription() {
+        return description;
+    }
+    Documentary& operator=(const Documentary& rhs);
+    bool operator==(const Documentary& rhs);
 };
 
 
