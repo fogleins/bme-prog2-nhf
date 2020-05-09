@@ -7,6 +7,8 @@
 
 #include "movie.h"
 
+using namespace std;
+
 /** Korhatár-besorolások */
 enum Rating {
     unrated = -1, /**< Besorolás nélküli */
@@ -23,13 +25,14 @@ class Family : public Movie {
 public:
     /** A család osztály konstruktora
      *
-     * @param title A film címe
-     * @param runningTime A film hossza percben
-     * @param releaseYear A film megjelenési éve
-     * @param rating A film korhatár-besorolása
+     * @param _title A film címe
+     * @param _runningTime A film hossza percben
+     * @param _releaseYear A film megjelenési éve
+     * @param _rating A film korhatár-besorolása
      */
-    Family(const string& title, unsigned int runningTime, unsigned int releaseYear, Rating rating)
-        : Movie(c.movies.getElementCount() + 1, title, runningTime, releaseYear, FamilyE), ageRating(rating) { }
+    Family(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Rating _rating = unrated)
+        : Movie(_title, _runningTime, _releaseYear, FamilyE), ageRating(_rating) { }
+
     /** Getter függvény a korhatár-besorolás visszaadására
      *
      * @return A film korhatár-besorolása
@@ -37,6 +40,8 @@ public:
     Rating getAgeRating() {
         return ageRating;
     }
+
+    void print(const string& sep = " ");
     Family& operator=(const Family& rhs);
     bool operator==(const Family& rhs);
 };

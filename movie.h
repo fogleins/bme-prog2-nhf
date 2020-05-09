@@ -6,9 +6,9 @@
 #define FILMTAR_MOVIE_H
 
 #include <string>
+#include <iostream>
 
-#include "data.h"
-#include "collection.h"
+//#include "collection.h"
 
 using namespace std;
 
@@ -20,46 +20,73 @@ enum Category {
 };
 
 class Movie {
-protected:
-    unsigned int id;
+private:
+    unsigned int id; /**< A film azonosítója és indexere */
     string title; /**< A film címe */
     unsigned int runningTime; /**< A film hossza percben */
     unsigned int releaseYear; /**< A film kiadásának éve */
     Category category; /**< A film típusa */
-    Collection c; /**< Az a Collection, ami tartalmazza a filmet */
+    //class Collection* c; /**< Az a Collection, ami tartalmazza a filmet */ // TODO
 public:
-    Movie();
+    //Movie();
     /** A film osztály konstruktora
      *
-     * @param id A film azonosítója
-     * @param title A film címe
-     * @param runningTime A film hossza percben
-     * @param releaseYear A film megjelenési éve
-     * @param category A film típusa
+     * @param _title A film címe
+     * @param _runningTime A film hossza percben
+     * @param _releaseYear A film megjelenési éve
+     * @param _category A film típusa
      */
-    Movie(int id, const string& title, unsigned int runningTime, unsigned int releaseYear, Category category = OtherE)
-        : id(c.movies.getElementCount() + 1), title(title), runningTime(runningTime),
-        releaseYear(releaseYear), category(category) { }
+    Movie(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Category _category = OtherE)
+        : /*c(_c), */id(-1), title(_title), runningTime(_runningTime), releaseYear(_releaseYear), category(_category) { }
+//    TODO: dtor
+//    virtual ~Movie() { }
 
-    unsigned int getID() {
+    // getters
+    unsigned int getID() const {
         return id;
     }
-    string getTitle() {
+    string getTitle() const {
         return title;
     }
-    unsigned int getRunningTime() {
+    unsigned int getRunningTime() const {
         return runningTime;
     }
-    unsigned int getReleaseYear() {
-        return releaseYear();
+    unsigned int getReleaseYear() const {
+        return releaseYear;
     }
-    Category getCategory() {
+    Category getCategory() const {
         return category;
     }
-    Movie& operator=(const Movie& rhs);
-    bool operator==(const Movie& rhs);
-    // std::ostream& operator<<(std::ostream& os, const String& s0);
-};
+//    Collection* getCollection() const {
+//        return c;
+//    }
 
+    // setters
+    void setID(unsigned int _id) {
+        id = _id;
+    }
+    void setTitle(const string& t) {
+        title = t;
+    }
+    void setRunningTime(unsigned int rt) {
+        runningTime = rt;
+    }
+    void setReleaseYear(unsigned int ry) {
+        releaseYear = ry;
+    }
+    void setCategory(Category cat) {
+        category = cat;
+    }
+//    void setCollection(Collection* _c) {
+//        c = _c;
+//    }
+
+    virtual void print(const string& separator = " ");
+
+    // TODO: virtual legyen?
+    // TODO: copy ctor?
+    /* CLang-tidy warningot ad rá virtual*/ Movie& operator=(const Movie& rhs);
+    virtual bool operator==(const Movie& rhs);
+};
 
 #endif //FILMTAR_MOVIE_H

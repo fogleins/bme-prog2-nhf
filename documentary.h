@@ -12,14 +12,15 @@ class Documentary : public Movie {
 public:
     /** A dokumentumfilm osztály konstruktora
      *
-     * @param title A film címe
-     * @param runningTime A film hossza percben
-     * @param releaseYear A film kiadásának éve
-     * @param description A film rövid leírása
+     * @param _title A film címe
+     * @param _runningTime A film hossza percben
+     * @param _releaseYear A film kiadásának éve
+     * @param _description A film rövid leírása
      */
-    Documentary(const string& title, unsigned int runningTime, unsigned int releaseYear, const string& description)
-        : Movie(c.movies.getElementCount() + 1, title, runningTime, releaseYear, DocumentaryE),
-        description(description) { }
+    Documentary(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, const string& _description)
+        : Movie(_title, _runningTime, _releaseYear, DocumentaryE),
+        description(_description) { }
+
     /** Getter függvény a leírás visszaadására
      *
      * @return A dokumentumfilm leírása
@@ -27,8 +28,13 @@ public:
     string getDescription() {
         return description;
     }
+
+    void print(const string& sep = " ");
     Documentary& operator=(const Documentary& rhs);
     bool operator==(const Documentary& rhs);
+    bool operator==(const Movie& rhs) {
+        return false;
+    }
 };
 
 
