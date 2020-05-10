@@ -29,8 +29,13 @@ bool Movie::operator==(const Movie& rhs) {
  * @param sep Az adattagok közötti elválasztó karakter vagy karaktersorozat
  */
 void Movie::print(const string& sep) {
-    // TODO: separator referencia ok?
-    // TODO: endl mindig a hívás helyén kell, így az öröklött osztályok használhatják az alaposztály printjét
-    // TODO: category-nak a nevét írja ki, vagy elég az enum-os szám?
-    std::cout << id << sep << title << sep << runningTime << sep << releaseYear << sep << category;
+    cout << id << sep << title << sep << runningTime << " perc"<< sep << releaseYear << sep << getCategoryStr();
+}
+
+/** Fájlba írja a film adatait
+ *
+ * @param ofs A fájl, amibe az adatokat írja
+ */
+void Movie::print(ofstream& ofs) {
+    ofs << category << ";" << title << ";" << runningTime << ";" << releaseYear;
 }

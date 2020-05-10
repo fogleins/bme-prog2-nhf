@@ -9,14 +9,14 @@
 
 using namespace std;
 
-/** @class Data data.h
- *  @brief Dinamikus memóriakezelő osztály
+/** @class Data data.hpp
+ *  @brief Dinamikus heterogén kollekció kezelő osztály
  *
- * @tparam T Az a típus, amilyen típusú dinamikus memóriaterületet szeretnénk foglalni
+ * @tparam T A heterogén kollekció típusa
  *
  * @note
- * Ez a programrész alapból Movie típusú dinamikus tömb tárolására készült,
- * a sablonos megoldás csak a későbbi bővíthetőséget szolgálja.
+ * Ez a programrész Movie típusú dinamikus tömb tárolására készült,
+ * a sablonos megoldás csak a későbbi újrafelhasználhatóságot szolgálja.
  */
 template<class T>
 class Data {
@@ -85,7 +85,7 @@ public:
     void removeElement(unsigned int id) {
         try {
             if (elementCount <= id)
-                throw out_of_range("A megadott azonositoju elem nem letezik.");
+                throw out_of_range("Torles: A megadott azonositoju elem nem letezik.\n");
 
             elementCount -= 1;
             T** newArray = new T*[elementCount];
@@ -103,6 +103,7 @@ public:
             }
             delete [] array;
             array = newArray;
+            cout << "Torles sikeres" << endl;
         }
         catch (out_of_range& indexError) {
             cout << indexError.what() << endl;
@@ -144,6 +145,17 @@ public:
     //const T* operator[](unsigned int index) const;
     //const T& operator[](unsigned int index) const;
     // TODO: operator=?
+
+    /** Az operator= overloadja Data típusra
+     *
+     * @param rhs Az a Data típusú objektum, aminek az adatait az adott objektumba szeretnénk rakni
+     * @return Az rhs-sel megegyező tulajdonságú Data&
+     */
+    Data& operator=(Data rhs) {
+        array = rhs.array;
+        elementCount = rhs.elementCount;
+        return *this;
+    }
 };
 
 

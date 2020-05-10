@@ -21,6 +21,10 @@ public:
         : Movie(_title, _runningTime, _releaseYear, DocumentaryE),
         description(_description) { }
 
+    string getCategoryStr() {
+        return "Documentary";
+    }
+
     /** Getter függvény a leírás visszaadására
      *
      * @return A dokumentumfilm leírása
@@ -29,7 +33,8 @@ public:
         return description;
     }
 
-    void print(const string& sep = " ");
+    void print(const string& sep = "\t");
+    void print(ofstream& ofs);
     Documentary& operator=(const Documentary& rhs);
     bool operator==(const Documentary& rhs);
     bool operator==(const Movie& rhs) {

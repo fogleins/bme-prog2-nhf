@@ -28,3 +28,8 @@ void Documentary::print(const string& sep) {
     Movie::print(sep);
     cout << sep << "Leiras: " << description;
 }
+
+void Documentary::print(ofstream &ofs) {
+    Movie::print(ofs);
+    ofs << ";" << description;
+}

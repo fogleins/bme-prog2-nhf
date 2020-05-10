@@ -6,7 +6,9 @@
 #include "movie.h"
 #include "family.h"
 #include "documentary.h"
+#include "collection.h"
 
+#define MEMTRACE
 /* tesztesetek */
 int main() {
     std::cout << "Hello, World!" << std::endl;
@@ -17,6 +19,15 @@ int main() {
     Movie film4 = Movie("Film cime", 92, 2020);
     film4 = film1;
     bool egyezik = film1 == film4;
+    Collection coll;
+    coll.add(film1);
+    coll.add(film2);
+    coll.add(film3);
+    coll.remove(10);
+    coll.print();
+    coll.writeFile("./teszt.txt");
+    coll.search("ci");
+    coll.clearCollection();
 
     return 0;
 }

@@ -33,6 +33,10 @@ public:
     Family(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Rating _rating = unrated)
         : Movie(_title, _runningTime, _releaseYear, FamilyE), ageRating(_rating) { }
 
+    string getCategoryStr() {
+        return "Family";
+    }
+
     /** Getter függvény a korhatár-besorolás visszaadására
      *
      * @return A film korhatár-besorolása
@@ -41,7 +45,8 @@ public:
         return ageRating;
     }
 
-    void print(const string& sep = " ");
+    void print(const string& sep = "\t");
+    void print(ofstream& ofs);
     Family& operator=(const Family& rhs);
     bool operator==(const Family& rhs);
 };

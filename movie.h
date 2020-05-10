@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 //#include "collection.h"
 
@@ -57,6 +58,9 @@ public:
     Category getCategory() const {
         return category;
     }
+    virtual string getCategoryStr() {
+        return "Movie";
+    }
 //    Collection* getCollection() const {
 //        return c;
 //    }
@@ -81,7 +85,8 @@ public:
 //        c = _c;
 //    }
 
-    virtual void print(const string& separator = " ");
+    virtual void print(const string& sep = "\t");
+    virtual void print(ofstream& ofs);
 
     // TODO: virtual legyen?
     // TODO: copy ctor?

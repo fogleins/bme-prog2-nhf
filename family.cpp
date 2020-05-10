@@ -28,3 +28,8 @@ void Family::print(const string &sep) {
     Movie::print(sep);
     cout << sep << "Korhatar-besorolas: " << ageRating;
 }
+
+void Family::print(ofstream &ofs) {
+    Movie::print(ofs);
+    ofs << ";" << ageRating;
+}
