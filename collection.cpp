@@ -9,7 +9,7 @@ Data<Movie>& Collection::getMovies() {
 }
 
 void Collection::add(Movie& mv) {
-    mv.setID(movies.getElementCount() + 1);
+    mv.setID(movies.getElementCount());
     // mv.setCollection(this);
     movies.addElement(mv);
 }
@@ -26,6 +26,7 @@ void Collection::print() {
         movies[i]->print();
         cout << endl;
     }
+    cout << endl;
 }
 
 /** Kiírja egy adott indexű film adatait */
@@ -50,6 +51,7 @@ void Collection::search(const string& keyword) {
             if (!result)
                 cout << "ID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
             movies[i]->print();
+            cout << endl;
             result = true;
         }
     }
@@ -58,9 +60,10 @@ void Collection::search(const string& keyword) {
 }
 
 /** Az összes elem törlése */
-void Collection::clearCollection() { // TODO
+void Collection::clearCollection() { // TODO: dtorral?
     // Hátulról indul, így nem kell minden egyes törlés után áthelyezni az elemeket
-    for (unsigned int i = movies.getElementCount() - 1; i >= 0; --i) {
+    // A 0. indexű elem elérése miatt >= 0 kell, de ha -1 lesz, az unsigned int átfordul, ezért ezt is ellenőrizni kell
+    for (unsigned int i = movies.getElementCount() - 1; i >= 0 && i < -1; --i) { // TODO: i > 0?
         movies.removeElement(i);
     }
 }

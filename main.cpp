@@ -18,7 +18,7 @@ int main() {
     Documentary film3 = Documentary("Dokumentumfilm", 86, 2013,"Dokumentumfilm leirasa");
     Movie film4 = Movie("Film cime", 92, 2020);
     film4 = film1;
-    bool egyezik = film1 == film4;
+    bool egyezik = film1 == film3;
     Collection coll;
     coll.add(film1);
     coll.add(film2);
@@ -27,7 +27,18 @@ int main() {
     coll.print();
     coll.writeFile("./teszt.txt");
     coll.search("ci");
+    coll.remove(2); // TODO: ha ez a sor nincs itt, a coll2 rész crashel
+    coll.print();
+    cout << coll.getMovies().getElementCount() << endl;
+
+//    coll.clearCollection();
+
+    cout << "\ncoll2:\n";
+    Collection coll2;
+    coll2 = coll;
     coll.clearCollection();
+    if (!egyezik)
+        coll2.print();
 
     return 0;
 }

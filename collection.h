@@ -17,7 +17,7 @@ class Collection {
     Data<Movie> movies; /**< A tárolt filmek pointereit tároló tömb */
 public:
     Collection() : movies(Data<Movie>()) { }
-    // ~Collection() { }
+    // ~Collection() { movies.~Data(); }
     // TODO: Data& ok?
     Data<Movie>& getMovies();
     void add(Movie& mv);

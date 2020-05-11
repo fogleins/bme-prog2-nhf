@@ -47,7 +47,7 @@ public:
     }
 
     /** Destruktor */
-    ~Data<T>() {
+    virtual ~Data<T>() {
         delete[] array;
     }
 
@@ -152,7 +152,9 @@ public:
      * @return Az rhs-sel megegyező tulajdonságú Data&
      */
     Data& operator=(Data rhs) {
-        array = rhs.array;
+        for (unsigned int i = 0; i < rhs.elementCount; ++i) { // TODO: for nélkül, sima másolásnál ok?
+            array[i] = rhs.array[i];
+        }
         elementCount = rhs.elementCount;
         return *this;
     }
