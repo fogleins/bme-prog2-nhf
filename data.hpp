@@ -91,18 +91,14 @@ public:
             elementCount -= 1;
             T** newArray = new T*[elementCount];
             for (unsigned int i = 0; i < elementCount; ++i) {
-                if (i == id) // ha eléri a törlendő elemet, eggyel növeljük a számlálót, és továbblépünk
-                    i++;
-                else {
-                    if (i > id) {
-                        array[i]->setID(array[i]->getID() - 1);
-                        newArray[i - 1] = array[i];
-                    }
-                    else
-                        newArray[i] = array[i];
+                if (i >= id) {
+                    array[i]->setID(array[i]->getID() - 1);
+                    newArray[i] = array[i + 1];
                 }
+                else
+                    newArray[i] = array[i];
             }
-            delete [] array;
+            delete[] array;
             array = newArray;
             if (!bulk)
                 cout << "Torles sikeres" << endl;
@@ -134,14 +130,9 @@ public:
      * @param index A keresett elem indexere
      * @return A tömb indexedik eleme, T típusú referencia
      */
-    T*& operator[](unsigned int index) { // TODO: hiba esetén is legyen return
-        try {
-            if (index >= elementCount)
-                throw out_of_range("A megadott indexu elem nem letezik.");
-        }
-        catch (out_of_range& indexError) {
-            cout << indexError.what() << endl;
-        }
+    T*& operator[](unsigned int index) {
+        if (index >= elementCount)
+            throw out_of_range("A megadott indexu elem nem letezik.");
         return array[index];
     }
     //const T* operator[](unsigned int index) const;
@@ -153,7 +144,7 @@ public:
      * @return Az rhs-sel megegyező tulajdonságú Data&
      */
     Data& operator=(Data rhs) {
-        for (unsigned int i = 0; i < rhs.elementCount; ++i) { // TODO: for nélkül, sima másolásnál ok?
+        for (unsigned int i = 0; i < rhs.elementCount; ++i) {
             array[i] = rhs.array[i];
         }
         elementCount = rhs.elementCount;
