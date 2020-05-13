@@ -35,10 +35,15 @@ public:
         return description;
     }
 
-    void print(const string& sep = "\t") const;
-    void print(ofstream& ofs) const;
+    void print(ostream& os = cout, bool file = false) const;
     Documentary& operator=(const Documentary& rhs);
     bool operator==(const Documentary& rhs);
+
+    /** Egyenlőségvizsgálat-operator overloadja Documentary és Movie típusra
+     *
+     * @param rhs A jobboldali, Movie típusú objektum
+     * @return False, mivel két különböző típusú film nem lehet azonos
+     */
     bool operator==(const Movie& rhs) {
         return false;
     }

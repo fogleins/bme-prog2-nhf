@@ -4,6 +4,11 @@
 
 #include "family.h"
 
+/** Értékadás operator overloadja Family típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return A jobboldali operandussal megegyező tulajdonságú Family&
+ */
 Family& Family::operator=(const Family& rhs) {
     setID(rhs.getID());
     setTitle(rhs.getTitle());
@@ -14,6 +19,11 @@ Family& Family::operator=(const Family& rhs) {
     return *this;
 }
 
+/** Egyenlőségvizsgálat-operator overloadja Family típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return True, ha a két film megegyezik
+ */
 bool Family::operator==(const Family &rhs) {
     if (this == &rhs)
         return true;
@@ -23,12 +33,15 @@ bool Family::operator==(const Family &rhs) {
             ageRating == rhs.ageRating;
 }
 
-void Family::print(const string &sep) const {
-    Movie::print(sep);
-    cout << sep << "Korhatar-besorolas: " << ageRating;
-}
-
-void Family::print(ofstream &ofs) const {
-    Movie::print(ofs);
-    ofs << ";" << ageRating;
+/** A megadott ostreamre írja a film adatait
+ *
+ * @param os Az ostream, amire az adatokat írja
+ * @param file Igaz, ha fájlba kell írni az adatokat
+ */
+void Family::print(ostream& os, bool file) const {
+    Movie::print(os, file);
+    if (file)
+        os << ';' << ageRating;
+    else
+        os << '\t' << ageRating;
 }

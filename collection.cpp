@@ -4,20 +4,40 @@
 
 #include "collection.h"
 
+/** Getter függvény a tárolt Data tömb visszaadására
+ *
+ * @return A tárolt Data<Movie>&
+ */
 Data<Movie>& Collection::getMovies() {
     return movies;
 }
 
+/** Elem felvétele a gyűjteménybe
+ *
+ * @param mv A felveendő objektum
+ */
 void Collection::add(Movie& mv) {
     mv.setID(movies.getElementCount());
     movies.addElement(mv);
 }
 
+/** Elem törlése a gyűjteményből
+ *
+ * @param index A törlendő elem indexe
+ */
 void Collection::remove(unsigned int index) {
-    movies.removeElement(index);
+    try {
+        if (index > movies.getElementCount()) {
+            throw out_of_range("Nem letezik a megadott indexu elem");
+        }
+        movies.removeElement(index);
+    }
+    catch (out_of_range& indexError) {
+        cout << "Torles: " << indexError.what() << endl;
+    }
 }
 
-/** Kilistázza az összes filmet és azok adatait */
+/** Kilistázza az összes filmet és azok adatait a konzolra */
 void Collection::print() {
     cout << "ID\tCim\tHossz\tEv\tKategoria\tEgyeb" << endl; // TODO: hosszra formázás
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
@@ -27,7 +47,7 @@ void Collection::print() {
     cout << endl;
 }
 
-/** Kiírja egy adott indexű film adatait */
+/** Kiírja egy adott indexű film adatait a konzolra */
 void Collection::print(unsigned int index) {
     try {
         if (index > movies.getElementCount())
@@ -45,16 +65,15 @@ void Collection::print(unsigned int index) {
  *
  * @param keyword A keresendő kifejezés
  */
- // TODO: bővítés más tulajdonságokra is?
-void Collection::search(const string& keyword) {
+void Collection::search(const string& keyword, ostream& os) {
     bool result = false; // ha volt már találat, akkor true lesz
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
         size_t found = movies[i]->getTitle().find(keyword);
         if (found != -1) {
             if (!result)
-                cout << "Kereses - \"" << keyword << "\":\nID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
-            movies[i]->print();
-            cout << endl;
+                os << "Kereses - \"" << keyword << "\":\nID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
+            movies[i]->print(os);
+            os << endl;
             result = true;
         }
     }
@@ -62,7 +81,7 @@ void Collection::search(const string& keyword) {
         cout << "Nem talalhato a keresesi feltetelnek megfelelo cimu film a gyujtemenyben." << endl;
 }
 
-/** Az összes elem törlése */
+/** Az összes elem törlése a gyűjteményből */
 void Collection::clearCollection() { // TODO: dtorral?
     // Hátulról indul, így nem kell minden egyes törlés után áthelyezni az elemeket
     // A 0. indexű elem elérése miatt >= 0 kell, de ha -1 lesz, az unsigned int átfordul, ezért ezt is ellenőrizni kell
@@ -117,7 +136,8 @@ void Collection::readFile(const char* path) {
         cout << ioerror.what() << endl;
     }
 }
-/** Az adott gyűjtemény mentése
+
+/** Az adott gyűjtemény mentése fájlba
  *
  * @param path A kimeneti fájl elérési útja
  */
@@ -127,7 +147,7 @@ void Collection::writeFile(const char* path) {
         if (!outputTxt)
             throw ios_base::failure("A fajlba iras sikertelen");
         for (unsigned i = 0; i < movies.getElementCount(); ++i) {
-            movies[i]->print(outputTxt);
+            movies[i]->print(outputTxt, true);
             outputTxt << endl;
         }
         outputTxt.close();
@@ -135,16 +155,25 @@ void Collection::writeFile(const char* path) {
     catch (ios_base::failure& ioerror) {
         cout << ioerror.what() << endl;
     }
-    // TODO: hibakezelés
 }
 
+/** Értékadás operator overloadja Collection típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return A jobboldali operandussal megegyező tulajdonságú Collection&
+ */
 Collection& Collection::operator=(const Collection& rhs) {
     if (this != &rhs) {
         movies = rhs.movies;
     }
     return *this;
 }
-
+/*TODO: kell?*/
+/** Egyenlőségvizsgálat-operator overloadja Collection típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return True, ha a két gyűjtemény ugyanaz
+ */
 bool Collection::operator==(const Collection &rhs) {
     return &this->movies == &rhs.movies;
 }

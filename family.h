@@ -48,8 +48,7 @@ public:
         return ageRating;
     }
 
-    void print(const string& sep = "\t") const;
-    void print(ofstream& ofs) const;
+    void print(ostream& os = cout, bool file = false) const;
     Family& operator=(const Family& rhs);
     bool operator==(const Family& rhs);
     bool operator==(const Movie& rhs) {

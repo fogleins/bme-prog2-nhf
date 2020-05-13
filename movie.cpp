@@ -4,6 +4,11 @@
 
 #include "movie.h"
 
+/** Értékadás operator overloadja Movie típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return A jobboldali operandussal megegyező tulajdonságú Movie&
+ */
 Movie& Movie::operator=(const Movie& rhs) {
     if (this != &rhs) {
         id = rhs.id;
@@ -15,6 +20,11 @@ Movie& Movie::operator=(const Movie& rhs) {
     return *this;
 }
 
+/** Egyenlőségvizsgálat-operator overloadja Movie típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return True, ha a két film megegyezik
+ */
 bool Movie::operator==(const Movie& rhs) {
     if (this == &rhs)
         return true;
@@ -23,18 +33,14 @@ bool Movie::operator==(const Movie& rhs) {
                category == rhs.category;
 }
 
-/** Kiírja a film adatait a konzolra
+/** A megadott ostreamre írja a film adatait
  *
- * @param sep Az adattagok közötti elválasztó karakter vagy karaktersorozat
+ * @param os Az ostream, amire az adatokat írja
+ * @param file Igaz, ha fájlba kell írni az adatokat
  */
-void Movie::print(const string& sep) const {
-    cout << id << sep << title << sep << runningTime << " perc"<< sep << releaseYear << sep << getCategoryStr();
-}
-
-/** Fájlba írja a film adatait
- *
- * @param ofs A fájl, amibe az adatokat írja
- */
-void Movie::print(ofstream& ofs) const {
-    ofs << category << ";" << title << ";" << runningTime << ";" << releaseYear;
+void Movie::print(ostream& os, bool file) const {
+    if (file)
+        os << category << ';' << title << ';' << runningTime << ';' << releaseYear;
+    else // TODO: konzolra tabulátorral elválasztott megy?
+        os << id << '\t' << title << '\t' << runningTime << '\t' << releaseYear << '\t' << getCategoryStr();
 }

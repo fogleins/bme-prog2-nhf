@@ -4,6 +4,11 @@
 
 #include "documentary.h"
 
+/** Értékadás operator overloadja Documentary típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return A jobboldali operandussal megegyező tulajdonságú Documentary&
+ */
 Documentary& Documentary::operator=(const Documentary& rhs) {
     setID(rhs.getID());
     setTitle(rhs.getTitle());
@@ -14,21 +19,29 @@ Documentary& Documentary::operator=(const Documentary& rhs) {
     return *this;
 }
 
+/** Egyenlőségvizsgálat-operator overloadja Documentary típusra
+ *
+ * @param rhs A jobboldali operandus
+ * @return True, ha a két film megegyezik
+ */
 bool Documentary::operator==(const Documentary& rhs) {
     if (this == &rhs)
         return true;
     else
         return this->getTitle() == rhs.getTitle() && this->getRunningTime() == rhs.getRunningTime() &&
-            this->getRunningTime() == rhs.getReleaseYear() && this->getCategory() == rhs.getCategory() &&
+            this->getReleaseYear() == rhs.getReleaseYear() && this->getCategory() == rhs.getCategory() &&
             this->description == rhs.description;
 }
 
-void Documentary::print(const string& sep) const {
-    Movie::print(sep);
-    cout << sep << "Leiras: " << description;
-}
-
-void Documentary::print(ofstream &ofs) const {
-    Movie::print(ofs);
-    ofs << ";" << description;
+/** A megadott ostreamre írja a film adatait
+ *
+ * @param os Az ostream, amire az adatokat írja
+ * @param file Igaz, ha fájlba kell írni az adatokat
+ */
+void Documentary::print(ostream& os, bool file) const {
+    Movie::print(os, file);
+    if (file)
+        os << ";" << description;
+    else
+        os << '\t' << description;
 }

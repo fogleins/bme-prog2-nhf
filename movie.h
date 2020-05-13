@@ -76,12 +76,11 @@ public:
         category = cat;
     }
 
-    virtual void print(const string& sep = "\t") const;
-    virtual void print(ofstream& ofs) const;
+    virtual void print(ostream& os = cout, bool file = false) const;
 
-    // TODO: virtual legyen?
     // TODO: copy ctor?
-    /* CLang-tidy warningot ad rá virtual*/ Movie& operator=(const Movie& rhs);
+    // TODO: virtual legyen?
+    /*virtual*/ Movie& operator=(const Movie& rhs);
     virtual bool operator==(const Movie& rhs);
 };
 

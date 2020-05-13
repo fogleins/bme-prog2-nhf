@@ -28,7 +28,7 @@ public:
     void remove(unsigned int index);
     void print();
     void print(unsigned int index);
-    void search(const string& keyword);
+    void search(const string& keyword, ostream& os = cout);
     /** Az összes elem törlése */
     void clearCollection();
     void readFile(const char* path);
