@@ -47,7 +47,7 @@ public:
     }
 
     /** Destruktor */
-    virtual ~Data<T>() {
+    ~Data<T>() {
         delete[] array;
     }
 
@@ -81,8 +81,9 @@ public:
     /** Elem törlése a tömbből, ha nem sikerült a felszabadítás, kivételt dob
      *
      * @param id A törlendő film azonosítója
+     * @param bulk A teljes tömb törlése esetén true
      */
-    void removeElement(unsigned int id) {
+    void removeElement(unsigned int id, bool bulk = false) {
         try {
             if (elementCount <= id)
                 throw out_of_range("Torles: A megadott azonositoju elem nem letezik.\n");
@@ -103,7 +104,8 @@ public:
             }
             delete [] array;
             array = newArray;
-            cout << "Torles sikeres" << endl;
+            if (!bulk)
+                cout << "Torles sikeres" << endl;
         }
         catch (out_of_range& indexError) {
             cout << indexError.what() << endl;
@@ -132,7 +134,7 @@ public:
      * @param index A keresett elem indexere
      * @return A tömb indexedik eleme, T típusú referencia
      */
-    T*& operator[](unsigned int index) {
+    T*& operator[](unsigned int index) { // TODO: hiba esetén is legyen return
         try {
             if (index >= elementCount)
                 throw out_of_range("A megadott indexu elem nem letezik.");
@@ -144,7 +146,6 @@ public:
     }
     //const T* operator[](unsigned int index) const;
     //const T& operator[](unsigned int index) const;
-    // TODO: operator=?
 
     /** Az operator= overloadja Data típusra
      *

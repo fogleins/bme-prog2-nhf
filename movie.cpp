@@ -11,7 +11,6 @@ Movie& Movie::operator=(const Movie& rhs) {
         runningTime = rhs.runningTime;
         releaseYear = rhs.releaseYear;
         category = rhs.category;
-        //c = rhs.c;
     }
     return *this;
 }
@@ -21,14 +20,14 @@ bool Movie::operator==(const Movie& rhs) {
         return true;
     else
         return title == rhs.title && runningTime == rhs.runningTime && releaseYear == rhs.releaseYear &&
-               category == rhs.category/* && c == rhs.c*/;
+               category == rhs.category;
 }
 
 /** Kiírja a film adatait a konzolra
  *
  * @param sep Az adattagok közötti elválasztó karakter vagy karaktersorozat
  */
-void Movie::print(const string& sep) {
+void Movie::print(const string& sep) const {
     cout << id << sep << title << sep << runningTime << " perc"<< sep << releaseYear << sep << getCategoryStr();
 }
 
@@ -36,6 +35,6 @@ void Movie::print(const string& sep) {
  *
  * @param ofs A fájl, amibe az adatokat írja
  */
-void Movie::print(ofstream& ofs) {
+void Movie::print(ofstream& ofs) const {
     ofs << category << ";" << title << ";" << runningTime << ";" << releaseYear;
 }

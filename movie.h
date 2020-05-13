@@ -9,8 +9,6 @@
 #include <iostream>
 #include <fstream>
 
-//#include "collection.h"
-
 using namespace std;
 
 /** A film lehetséges típusai */
@@ -27,9 +25,7 @@ private:
     unsigned int runningTime; /**< A film hossza percben */
     unsigned int releaseYear; /**< A film kiadásának éve */
     Category category; /**< A film típusa */
-    //class Collection* c; /**< Az a Collection, ami tartalmazza a filmet */ // TODO
 public:
-    //Movie();
     /** A film osztály konstruktora
      *
      * @param _title A film címe
@@ -37,10 +33,11 @@ public:
      * @param _releaseYear A film megjelenési éve
      * @param _category A film típusa
      */
-    Movie(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Category _category = OtherE)
-        : /*c(_c), */id(-1), title(_title), runningTime(_runningTime), releaseYear(_releaseYear), category(_category) { }
-//    TODO: dtor
-//    virtual ~Movie() { }
+    explicit Movie(const string& _title = "No title", unsigned int _runningTime = -1, unsigned int _releaseYear = -1,
+            Category _category = OtherE)
+        : id(-1), title(_title), runningTime(_runningTime), releaseYear(_releaseYear), category(_category) { }
+
+    virtual ~Movie() { }
 
     // getters
     unsigned int getID() const {
@@ -58,12 +55,9 @@ public:
     Category getCategory() const {
         return category;
     }
-    virtual string getCategoryStr() {
+    virtual string getCategoryStr() const {
         return "Movie";
     }
-//    Collection* getCollection() const {
-//        return c;
-//    }
 
     // setters
     void setID(unsigned int _id) {
@@ -81,12 +75,9 @@ public:
     void setCategory(Category cat) {
         category = cat;
     }
-//    void setCollection(Collection* _c) {
-//        c = _c;
-//    }
 
-    virtual void print(const string& sep = "\t");
-    virtual void print(ofstream& ofs);
+    virtual void print(const string& sep = "\t") const;
+    virtual void print(ofstream& ofs) const;
 
     // TODO: virtual legyen?
     // TODO: copy ctor?

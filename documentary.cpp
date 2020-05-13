@@ -11,7 +11,6 @@ Documentary& Documentary::operator=(const Documentary& rhs) {
     setReleaseYear(rhs.getReleaseYear());
     description = rhs.description;
     setCategory(rhs.getCategory());
-    //setCollection(rhs.getCollection());
     return *this;
 }
 
@@ -21,15 +20,15 @@ bool Documentary::operator==(const Documentary& rhs) {
     else
         return this->getTitle() == rhs.getTitle() && this->getRunningTime() == rhs.getRunningTime() &&
             this->getRunningTime() == rhs.getReleaseYear() && this->getCategory() == rhs.getCategory() &&
-            this->description == rhs.description /*&& this->getCollection() == rhs.getCollection()*/;
+            this->description == rhs.description;
 }
 
-void Documentary::print(const string& sep) {
+void Documentary::print(const string& sep) const {
     Movie::print(sep);
     cout << sep << "Leiras: " << description;
 }
 
-void Documentary::print(ofstream &ofs) {
+void Documentary::print(ofstream &ofs) const {
     Movie::print(ofs);
     ofs << ";" << description;
 }

@@ -11,7 +11,6 @@ Family& Family::operator=(const Family& rhs) {
     setReleaseYear(rhs.getReleaseYear());
     setCategory(rhs.getCategory());
     ageRating = rhs.ageRating;
-    // setCollection(rhs.getCollection());
     return *this;
 }
 
@@ -21,15 +20,15 @@ bool Family::operator==(const Family &rhs) {
     else
         return this->getTitle() == rhs.getTitle() && this->getRunningTime() == rhs.getRunningTime() &&
             this->getReleaseYear() == rhs.getReleaseYear() && this->getCategory() == rhs.getCategory() &&
-            ageRating == rhs.ageRating /*&& this->getCollection() == rhs.getCollection()*/;
+            ageRating == rhs.ageRating;
 }
 
-void Family::print(const string &sep) {
+void Family::print(const string &sep) const {
     Movie::print(sep);
     cout << sep << "Korhatar-besorolas: " << ageRating;
 }
 
-void Family::print(ofstream &ofs) {
+void Family::print(ofstream &ofs) const {
     Movie::print(ofs);
     ofs << ";" << ageRating;
 }

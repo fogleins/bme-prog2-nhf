@@ -17,11 +17,13 @@ public:
      * @param _releaseYear A film kiadásának éve
      * @param _description A film rövid leírása
      */
-    Documentary(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, const string& _description)
-        : Movie(_title, _runningTime, _releaseYear, DocumentaryE),
-        description(_description) { }
+    explicit Documentary(const string& _title = "No title", unsigned int _runningTime = -1,
+            unsigned int _releaseYear = -1, const string& _description = "No description")
+        : Movie(_title, _runningTime, _releaseYear, DocumentaryE), description(_description) { }
 
-    string getCategoryStr() {
+    ~Documentary() { }
+
+    string getCategoryStr() const {
         return "Documentary";
     }
 
@@ -33,8 +35,8 @@ public:
         return description;
     }
 
-    void print(const string& sep = "\t");
-    void print(ofstream& ofs);
+    void print(const string& sep = "\t") const;
+    void print(ofstream& ofs) const;
     Documentary& operator=(const Documentary& rhs);
     bool operator==(const Documentary& rhs);
     bool operator==(const Movie& rhs) {

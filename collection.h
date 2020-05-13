@@ -7,9 +7,13 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <cstdlib>
 
 #include "data.hpp"
 #include "movie.h"
+#include "family.h"
+#include "documentary.h"
 
 using namespace std;
 

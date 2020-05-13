@@ -30,10 +30,13 @@ public:
      * @param _releaseYear A film megjelenési éve
      * @param _rating A film korhatár-besorolása
      */
-    Family(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Rating _rating = unrated)
+    explicit Family(const string& _title = "No title", unsigned int _runningTime = -1,
+            unsigned int _releaseYear = -1, Rating _rating = unrated)
         : Movie(_title, _runningTime, _releaseYear, FamilyE), ageRating(_rating) { }
 
-    string getCategoryStr() {
+    ~Family() { }
+
+    string getCategoryStr() const {
         return "Family";
     }
 
@@ -45,10 +48,13 @@ public:
         return ageRating;
     }
 
-    void print(const string& sep = "\t");
-    void print(ofstream& ofs);
+    void print(const string& sep = "\t") const;
+    void print(ofstream& ofs) const;
     Family& operator=(const Family& rhs);
     bool operator==(const Family& rhs);
+    bool operator==(const Movie& rhs) {
+        return false;
+    }
 };
 
 

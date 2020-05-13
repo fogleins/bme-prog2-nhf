@@ -31,7 +31,7 @@ int main() {
     coll.print();
     cout << coll.getMovies().getElementCount() << endl;
 
-//    coll.clearCollection();
+    coll.clearCollection();
 
     cout << "\ncoll2:\n";
     Collection coll2;
@@ -39,6 +39,23 @@ int main() {
     coll.clearCollection();
     if (!egyezik)
         coll2.print();
+
+    // beolvasás
+    cout << endl << endl << "Beolvasas" << endl;
+    Collection coll3;
+    coll3.readFile("./teszt.txt");
+    coll3.print(1);
+    coll3.print();
+
+    cout << "Parameter nelkuli ctor" << endl;
+    // TODO: paraméter nélkül hívható ctor
+    Movie asdf;
+    asdf.print();
+    cout << endl;
+
+    Documentary asdfg;
+    asdfg.print();
+    cout << endl;
 
     return 0;
 }
