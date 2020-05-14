@@ -21,6 +21,14 @@ void Collection::add(Movie& mv) {
     movies.addElement(mv);
 }
 
+/** Elem felvétele a gyűjteménybe
+ *
+ * @param mv A felveendő objektumra mutató pointer
+ */
+void Collection::add(Movie *mv) {
+    add(*mv);
+}
+
 /** Elem törlése a gyűjteményből
  *
  * @param index A törlendő elem indexe
@@ -38,13 +46,13 @@ void Collection::remove(unsigned int index) {
 }
 
 /** Kilistázza az összes filmet és azok adatait a konzolra */
-void Collection::print() {
-    cout << "ID\tCim\tHossz\tEv\tKategoria\tEgyeb" << endl; // TODO: hosszra formázás
+void Collection::print(ostream& os) {
+    os << "ID\tCim\tHossz\tEv\tKategoria\tEgyeb" << endl; // TODO: hosszra formázás
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
         movies[i]->print();
-        cout << endl;
+        os << endl;
     }
-    cout << endl;
+    os << endl;
 }
 
 /** Kiírja egy adott indexű film adatait a konzolra */

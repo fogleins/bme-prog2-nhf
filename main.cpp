@@ -8,88 +8,95 @@
 #include "documentary.h"
 #include "collection.h"
 
-#define MEMTRACE
 /* tesztesetek */
 int main() {
     // fájlba és konzolra írás tesztelése mindegyik filmtípuson
     TEST(movies, print) {
         stringstream t1, t2, t3;
-        Movie test1mv("1917", 119, 2019);
-        Family test2mv("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary test3mv("Free solo", 97, 2018, "Professional rock climber "
+        Movie* test1mv = new Movie("1917", 119, 2019);
+        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
         // konzolra írás függvényének tesztelése
-        test1mv.print(t1);
+        test1mv->print(t1);
         // az id inicializálatlan (unsigned -1 = 4294967295)
         EXPECT_STREQ("4294967295\t1917\t119\t2019\tMovie", t1.str().c_str());
 
         // gyűjteményhez adjuk, hogy kapjon id-t
         Collection coll;
         coll.add(test2mv);
-        test2mv.print(t2);
+        test2mv->print(t2);
         EXPECT_STREQ("0\tFrozen 2\t103\t2019\tFamily\t6", t2.str().c_str());
 
         // fájlba írás
-        test3mv.print(t3, true);
+        test3mv->print(t3, true);
         EXPECT_STREQ("1;Free solo;97;2018;Professional rock climber Alex Honnold attempts to conquer the "
                      "first free solo climb of famed El Capitan's 900-metre vertical rock face at "
                      "Yosemite National Park.", t3.str().c_str());
+        delete test1mv; // test2mv gyűjteményhez lett adva, azt a dtor felszabadítja
+        delete test3mv;
     } ENDM
 
     // gyűjteményhez adás és kiírás
     TEST(collection, addAndPrint) {
-        Movie test1mv("1917", 119, 2019);
-        Family test2mv("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary test3mv("Free solo", 97, 2018, "Professional rock climber "
+        Movie* test1mv = new Movie("1917", 119, 2019);
+        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
         Collection coll;
-        //üres gyűjtemény kiírása
-//        EXPECT_STREQ("ID\tCim\tHossz\tEv\tKategoria\tEgyeb", coll.print());
+        // üres gyűjtemény kiírása
+        stringstream ss;
+        coll.print(ss);
+        EXPECT_STREQ("ID\tCim\tHossz\tEv\tKategoria\tEgyeb\n\n", ss.str().c_str());
         coll.add(test1mv);
         coll.add(test2mv);
         coll.add(test3mv);
         EXPECT_EQ(3, coll.getMovies().getElementCount());
         stringstream t1, t2, t3;
 
-        test1mv.print(t1);
+        test1mv->print(t1);
         EXPECT_STREQ("0\t1917\t119\t2019\tMovie", t1.str().c_str());
-        test2mv.print(t2);
+        test2mv->print(t2);
         EXPECT_STREQ("1\tFrozen 2\t103\t2019\tFamily\t6", t2.str().c_str());
-        test3mv.print(t3, true);
+        test3mv->print(t3, true);
         EXPECT_STREQ("1;Free solo;97;2018;Professional rock climber Alex Honnold attempts to conquer the "
                      "first free solo climb of famed El Capitan's 900-metre vertical rock face at "
                      "Yosemite National Park.", t3.str().c_str());
+        // objektumok által foglalt memóriát a gyűjtemény szabadítja fel
     } ENDM
 
     // a filmek operator= és operator== függvényeinek tesztelése
     TEST(movies, operators) {
-        Movie test1mv("1917", 119, 2019);
-        Family test2mv("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary test3mv("Free solo", 97, 2018, "Professional rock climber "
+        Movie* test1mv = new Movie("1917", 119, 2019);
+        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
-        Movie test1copy = test1mv;
-        Family test2copy = test2mv;
-        Documentary test3copy = test3mv;
+        Movie test1copy = *test1mv;
+        Family test2copy = *test2mv;
+        Documentary test3copy = *test3mv;
 //        Documentary wrongType = test2mv;
 //        EXPECT_EQ(false, test2mv == wrongType);
-        EXPECT_EQ(false, test1mv == test2mv);
-        EXPECT_EQ(false, test3mv == test1mv);
-        EXPECT_EQ(true, test1mv == test1copy);
-        EXPECT_EQ(true, test2mv == test2copy);
-        EXPECT_EQ(true, test3mv == test3copy);
+        EXPECT_EQ(false, *test1mv == *test2mv);
+        EXPECT_EQ(false, *test3mv == *test1mv);
+        EXPECT_EQ(true, *test1mv == test1copy);
+        EXPECT_EQ(true, *test2mv == test2copy);
+        EXPECT_EQ(true, *test3mv == test3copy);
+        delete test1mv;
+        delete test2mv;
+        delete test3mv;
     } ENDM
 
     // a túlindexelésnél dobott kivételt és a törlés függvényeket teszteli
     TEST(collection, indexer) {
-        Movie test1mv("1917", 119, 2019);
-        Family test2mv("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary test3mv("Free solo", 97, 2018, "Professional rock climber "
+        Movie* test1mv = new Movie("1917", 119, 2019);
+        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
@@ -110,9 +117,9 @@ int main() {
     TEST(collection, search) {
         Collection coll;
         stringstream ss1, ss2;
-        Movie mv1("1917", 119, 2019);
-        Family mv2("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary mv3("Free solo", 97, 2018, "Alex Honnold attempts to conquer "
+        Movie* mv1 = new Movie("1917", 119, 2019);
+        Family* mv2 = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* mv3 = new Documentary("Free solo", 97, 2018, "Alex Honnold attempts to conquer "
                                                "the first free solo climb of El Capitan's 900-metre vertical rock face.");
         coll.add(mv1);
         coll.add(mv2);

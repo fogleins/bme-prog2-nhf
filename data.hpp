@@ -48,6 +48,8 @@ public:
 
     /** Destruktor */
     ~Data<T>() {
+        for (unsigned i = 0; i < elementCount; ++i)
+            delete array[i];
         delete[] array;
     }
 
@@ -66,7 +68,7 @@ public:
     void addElement(T& elementToAdd) {
         try {
             T** newArray = new T*[elementCount + 1];
-            for (int i = 0; i < elementCount; ++i)
+            for (unsigned int i = 0; i < elementCount; ++i)
                 newArray[i] = array[i];
             newArray[elementCount] = &elementToAdd;
             delete[] array;
@@ -98,6 +100,7 @@ public:
                 else
                     newArray[i] = array[i];
             }
+            delete array[id];
             delete[] array;
             array = newArray;
             if (!bulk)

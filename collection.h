@@ -25,8 +25,9 @@ public:
     // TODO: Data& ok?
     Data<Movie>& getMovies();
     void add(Movie& mv);
+    void add(Movie* mv);
     void remove(unsigned int index);
-    void print();
+    void print(ostream& os = cout);
     void print(unsigned int index);
     void search(const string& keyword, ostream& os = cout);
     /** Az összes elem törlése */
