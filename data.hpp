@@ -29,12 +29,6 @@ public:
         array = new T*[elementCount];
     }
 
-    // TODO: ez csak fájl beolvasásánál lehet hasznos, kell?
-    explicit Data(unsigned int size) {
-        elementCount = size;
-        array = new T*[size];
-    }
-
     /** Másoló konstruktor
      *
      * @param from Az a Data típusú elem, amiből másolni szeretnénk az újba
@@ -61,60 +55,48 @@ public:
         return elementCount;
     }
 
-    /** Elem felvétele a tömbbe, ha nem sikerült a foglalás, kivételt dob
+    /** Elem felvétele a tömbbe
      *
-     * @param movieToAdd A felveendő film
+     * @param elementToAdd A felveendő elem
      */
     void addElement(T& elementToAdd) {
-        try {
-            T** newArray = new T*[elementCount + 1];
-            for (unsigned int i = 0; i < elementCount; ++i)
-                newArray[i] = array[i];
-            newArray[elementCount] = &elementToAdd;
-            delete[] array;
-            array = newArray;
-            elementCount += 1;
-        }
-        catch (bad_alloc& e) {
-            cout << "A memoriafoglalas nem sikerult: " << e.what() << endl;
-        }
+        T** newArray = new T*[elementCount + 1];
+        for (unsigned int i = 0; i < elementCount; ++i)
+            newArray[i] = array[i];
+        newArray[elementCount] = &elementToAdd;
+        delete[] array;
+        array = newArray;
+        elementCount += 1;
     }
 
-    /** Elem törlése a tömbből, ha nem sikerült a felszabadítás, kivételt dob
+    /** Elem törlése a tömbből
+     *  @note Ha a memóriafoglalás nem sikerül, std::bad_alloc kivétel kerül dobásra,
+     *  amit a hívónak kell kezelnie
      *
-     * @param id A törlendő film azonosítója
-     * @param bulk A teljes tömb törlése esetén true
+     * @param id A törlendő elem azonosítója
      */
-    void removeElement(unsigned int id, bool bulk = false) {
-        try {
-            if (elementCount <= id)
-                throw out_of_range("Torles: A megadott azonositoju elem nem letezik.\n");
+    void removeElement(unsigned int id) {
+        if (elementCount <= id)
+            throw out_of_range("Torles: A megadott azonositoju elem nem letezik.\n");
 
-            elementCount -= 1;
-            T** newArray = new T*[elementCount];
-            for (unsigned int i = 0; i < elementCount; ++i) {
-                if (i >= id) {
-                    array[i]->setID(array[i]->getID() - 1);
-                    newArray[i] = array[i + 1];
-                }
-                else
-                    newArray[i] = array[i];
+        elementCount -= 1;
+        T** newArray = new T*[elementCount];
+        for (unsigned int i = 0; i < elementCount; ++i) {
+            if (i >= id) {
+                array[i]->setID(array[i]->getID() - 1);
+                newArray[i] = array[i + 1];
             }
-            delete array[id];
-            delete[] array;
-            array = newArray;
-            if (!bulk)
-                cout << "Torles sikeres" << endl;
+            else
+                newArray[i] = array[i];
         }
-        catch (out_of_range& indexError) {
-            cout << indexError.what() << endl;
-        }
-        catch (bad_alloc& memError) {
-            cout << "A memoriafoglalas nem sikerult: " << memError.what() << endl;
-        }
+        delete array[id];
+        delete[] array;
+        array = newArray;
     }
 
-    /** Elem törlése a tömbből, ha nem sikerült a felszabadítás, kivételt dob
+    /** Elem törlése a tömbből
+     *  @note Ha a memóriafoglalás nem sikerül, std::bad_alloc kivétel kerül dobásra,
+     *  amit a hívónak kell kezelnie
      *
      * @param elementToRemove A törlendő elem referenciája
      */
@@ -125,21 +107,21 @@ public:
                 return;
             }
         }
-        cout << "A megadott film nem talalhato." << endl;
+        throw runtime_error("A megadott elem nem szerepel a tombben.");
     }
 
     /** Indexelő operator
      *
      * @param index A keresett elem indexere
      * @return A tömb indexedik eleme, T típusú referencia
+     * @throws std::out_of_range ha a megadott elem túlmutat
+     * a tömb határain
      */
     T*& operator[](unsigned int index) {
         if (index >= elementCount)
             throw out_of_range("A megadott indexu elem nem letezik.");
         return array[index];
     }
-    //const T* operator[](unsigned int index) const;
-    //const T& operator[](unsigned int index) const;
 
     /** Az operator= overloadja Data típusra
      *
