@@ -17,10 +17,21 @@ public:
      * @param _releaseYear A film kiadásának éve
      * @param _description A film rövid leírása
      */
-    explicit Documentary(const string& _title = "No title", unsigned int _runningTime = -1,
-            unsigned int _releaseYear = -1, const string& _description = "No description")
+    Documentary(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, const string& _description)
         : Movie(_title, _runningTime, _releaseYear, DocumentaryE), description(_description) { }
 
+    /** Alapértelmezett konstruktor */
+    Documentary(): Movie(), description("") { }
+
+    /** Másoló konstruktor
+     *
+     * @param from A másolandó film
+     */
+    Documentary(const Documentary& from)  : Movie(from) {
+        description = from.description;
+    }
+
+    /** Destruktor */
     ~Documentary() { }
 
     string getCategoryStr() const {
@@ -36,15 +47,15 @@ public:
     }
 
     void print(ostream& os = cout, bool file = false) const;
-    Documentary& operator=(const Documentary& rhs);
-    bool operator==(const Documentary& rhs);
+    Documentary& operator=(const Documentary& rhs) ;
+    bool operator==(const Documentary& rhs) const;
 
     /** Egyenlőségvizsgálat-operator overloadja Documentary és Movie típusra
      *
      * @param rhs A jobboldali, Movie típusú objektum
      * @return False, mivel két különböző típusú film nem lehet azonos
      */
-    bool operator==(const Movie& rhs) {
+    bool operator==(const Movie& rhs) const {
         return false;
     }
 };

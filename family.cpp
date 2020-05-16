@@ -24,7 +24,7 @@ Family& Family::operator=(const Family& rhs) {
  * @param rhs A jobboldali operandus
  * @return True, ha a két film megegyezik
  */
-bool Family::operator==(const Family &rhs) {
+bool Family::operator==(const Family &rhs) const {
     if (this == &rhs)
         return true;
     else
@@ -43,5 +43,5 @@ void Family::print(ostream& os, bool file) const {
     if (file)
         os << ';' << ageRating;
     else
-        os << '\t' << ageRating;
+        os << "\tKorhatar-besorolas: " << ageRating;
 }

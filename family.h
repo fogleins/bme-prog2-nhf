@@ -19,9 +19,9 @@ enum Rating {
     ages18AndUp = 18 /**< 18 éven felülieknek */
 };
 
-/** Családi film objektumot tároló osztály */
+/** Családi film osztály */
 class Family : public Movie {
-    Rating ageRating; /**< A film korhatára */
+    Rating ageRating; /**< A film korhatár-besorolása */
 public:
     /** A család osztály konstruktora
      *
@@ -30,10 +30,21 @@ public:
      * @param _releaseYear A film megjelenési éve
      * @param _rating A film korhatár-besorolása
      */
-    explicit Family(const string& _title = "No title", unsigned int _runningTime = -1,
-            unsigned int _releaseYear = -1, Rating _rating = unrated)
+    Family(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Rating _rating = unrated)
         : Movie(_title, _runningTime, _releaseYear, FamilyE), ageRating(_rating) { }
 
+    /** Alapértelmezett konstruktor */
+    Family(): Movie(), ageRating(unrated) { }
+
+    /** Másoló konstruktor
+     *
+     * @param from A másolandó film
+     */
+    Family(const Family& from): Movie(from) {
+        ageRating = from.ageRating;
+    }
+
+    /** Destruktor */
     ~Family() { }
 
     string getCategoryStr() const {
@@ -50,8 +61,8 @@ public:
 
     void print(ostream& os = cout, bool file = false) const;
     Family& operator=(const Family& rhs);
-    bool operator==(const Family& rhs);
-    bool operator==(const Movie& rhs) {
+    bool operator==(const Family& rhs) const;
+    bool operator==(const Movie& rhs) const {
         return false;
     }
 };

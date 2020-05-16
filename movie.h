@@ -33,10 +33,25 @@ public:
      * @param _releaseYear A film megjelenési éve
      * @param _category A film típusa
      */
-    explicit Movie(const string& _title = "No title", unsigned int _runningTime = -1, unsigned int _releaseYear = -1,
-            Category _category = OtherE)
-        : id(-1), title(_title), runningTime(_runningTime), releaseYear(_releaseYear), category(_category) { }
+    Movie(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Category _category = OtherE)
+        : id(0), title(_title), runningTime(_runningTime), releaseYear(_releaseYear), category(_category) { }
 
+    /** Alapértelmezett konstruktor */
+    Movie(): id(0), title(""), runningTime(0), releaseYear(0) { }
+
+    /** Másoló konstruktor
+     *
+     * @param from A másolandó film
+     */
+    Movie(const Movie& from) {
+        id = 0;
+        title = from.title;
+        runningTime = from.runningTime;
+        releaseYear = from.releaseYear;
+        category = from.category;
+    }
+
+    /** Destruktor */
     virtual ~Movie() { }
 
     // getters
@@ -78,10 +93,9 @@ public:
 
     virtual void print(ostream& os = cout, bool file = false) const;
 
-    // TODO: copy ctor?
-    // TODO: virtual legyen?
-    /*virtual*/ Movie& operator=(const Movie& rhs);
-    virtual bool operator==(const Movie& rhs);
+    Movie& operator=(const Movie& rhs);
+
+    /*virtual*/ bool operator==(const Movie& rhs) const; // TODO
 };
 
 #endif //FILMTAR_MOVIE_H

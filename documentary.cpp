@@ -24,7 +24,7 @@ Documentary& Documentary::operator=(const Documentary& rhs) {
  * @param rhs A jobboldali operandus
  * @return True, ha a két film megegyezik
  */
-bool Documentary::operator==(const Documentary& rhs) {
+bool Documentary::operator==(const Documentary& rhs) const {
     if (this == &rhs)
         return true;
     else
@@ -43,5 +43,5 @@ void Documentary::print(ostream& os, bool file) const {
     if (file)
         os << ";" << description;
     else
-        os << '\t' << description;
+        os << "\tLeiras: " << description;
 }
