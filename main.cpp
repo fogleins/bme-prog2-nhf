@@ -1,9 +1,6 @@
 #include <iostream>
 #include <ctime>
 
-#include "gtest_lite.h"
-#include "memtrace.h"
-
 #include "movie.h"
 #include "family.h"
 #include "documentary.h"
@@ -20,8 +17,13 @@ using std::stringstream;
 // való teszteléshez definiálatlannak kell lennie
 //#define JPORTA
 
+#ifdef JPORTA
+#include "gtest_lite.h"
+#include "memtrace.h"
+#endif
+
 #ifndef JPORTA
-void add(Collection& coll);
+void add(Collection& coll, bool& exit);
 string getCurrentTime();
 bool containsAccentedChar(const char* str);
 #endif
@@ -85,7 +87,15 @@ int main() {
         tmovie->print(tmoviess);
         EXPECT_STREQ("1\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", tfamilyss.str().c_str());
         EXPECT_STREQ("2\t1917\t119 perc\t2019\tMovie", tmoviess.str().c_str());
+    } ENDM
 
+    TEST(collection, printNotEmpty) {
+        stringstream ss;
+        tcoll.print(ss);
+        EXPECT_STREQ("ID\tCim\tHossz\tEv\tKategoria\tEgyeb\n0\tFree solo\t97 perc\t2018\tDocumentary\tLeiras: "
+                     "Professional rock climber Alex Honnold attempts to conquer the first free solo climb of famed "
+                     "El Capitan's 900-metre vertical rock face at Yosemite National Park.\n1\tFrozen 2\t103 perc\t2019"
+                     "\tFamily\tKorhatar-besorolas: 6\n2\t1917\t119 perc\t2019\tMovie\n\n", ss.str().c_str());
     } ENDM
 
     TEST(collection, checkDuplicate) {
@@ -168,7 +178,7 @@ int main() {
     // keresés a gyűjteményben
     TEST(collection, search) {
         Collection coll;
-        stringstream ss1, ss2;
+        stringstream ss1, ss2, ss3;
         Movie* mv1 = new Movie("1917", 119, 2019);
         Family* mv2 = new Family("Frozen 2", 103, 2019, ages6AndUp);
         Documentary* mv3 = new Documentary("Free solo", 97, 2018, "Alex Honnold attempts to conquer "
@@ -185,12 +195,17 @@ int main() {
                      "103 perc\t2019\tFamily\tKorhatar-besorolas: 6\n2\tFree solo\t97 perc\t2018\tDocumentary\tLeiras: "
                      "Alex Honnold attempts to conquer the first free solo climb of El Capitan's 900-metre vertical "
                      "rock face.\n",ss2.str().c_str());
+        coll.search("nem talalhato", ss3);
+        EXPECT_STREQ("Nem talalhato a keresesi feltetelnek megfelelo cimu film a gyujtemenyben.\n",
+                ss3.str().c_str());
     } ENDM
 
     // fájlbeolvasás tesztelése
     TEST(collection, readFile) {
         Collection coll;
-        coll.readFile("./teszt.txt");
+        // ha nem létező fájlt próbálunk megnyitni, a dobott kivételt lekezeli
+        EXPECT_NO_THROW(coll.readFile("ilyenFajlNincs.csv"));
+        coll.readFile("./teszt.csv");
         Family* familymv = (Family*) coll.getMovies()[1];
         EXPECT_EQ(12, familymv->getAgeRating());
         stringstream ss;
@@ -198,6 +213,20 @@ int main() {
         EXPECT_STREQ("Dokumentumfilm leirasa", docmv->getDescription().c_str());
         docmv->print(ss);
         EXPECT_STREQ("2\tDokumentumfilm\t86 perc\t2013\tDocumentary\tLeiras: Dokumentumfilm leirasa",
+                ss.str().c_str());
+    } ENDM
+
+    // gyűjtemény kiírása
+    TEST(collection, writeFile) {
+        Collection coll, coll2;
+        Movie* mv = new Movie("Cim", 25, 2020);
+        coll.add(mv);
+        coll.writeFile("kiiras.csv");
+        // visszaolvassuk a teszteléshez
+        stringstream ss;
+        coll2.readFile("kiiras.csv");
+        coll2.print(0, ss);
+        EXPECT_STREQ("ID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb\n0\tCim\t25 perc\t2020\tMovie\n",
                 ss.str().c_str());
     } ENDM
 #endif
@@ -208,13 +237,19 @@ int main() {
     cout << "Parancsok listazasahoz: sugo" << endl;
     string command;
     while (!exit) {
+        command = "";
         cout << "Parancs: ";
-        while (command.empty()) // üres string esetén újból beolvassuk
+        // üres string esetén újból beolvassuk, EOF esetén kilépünk a programból
+        while (command.empty()) {
             getline(cin, command);
+            if ((exit = cin.eof())) { break; }
+        }
 
         // film felvétele
         if (command.find("uj") == 0) {
-            add(coll);
+            add(coll, exit);
+            if (exit)
+                break;
         }
         else if (command.find("keres") == 0) {
             if (command.length() <= 6)
@@ -260,7 +295,7 @@ int main() {
             string confirm;
             cout << "A nem mentett modositasok elvesznek, ha nem menti a gyujtemenyt." << endl;
             while ((confirm.find("igen") != 0 && confirm.find("nem") != 0)) {
-                cout << "Biztosan ki szeretne lepni? (igen/nem): ";
+                cout << "Biztosan torli a gyujtemenyt? (igen/nem): ";
                 cin >> confirm;
                 if (confirm.find("igen") == 0)
                     coll.clear();
@@ -271,7 +306,7 @@ int main() {
         }
         else if (command == "sugo") {
             cout << "Elerheto parancsok:\n\tuj:\tuj film felvetele a gyujtemenybe\n\tkeres:\tkereses filmek cimere "
-                    "a gyujtemenyben\n\tp:\tgyujtemeny beolvasasa fajlbol\n\tls:\ta tarolt filmek kilistazasa\n\trm id:"
+                    "a gyujtemenyben\n\tp:\tgyujtemeny beolvasasa fajlbol\n\tls:\ta tarolt filmek kilistazasa\n\trm:"
                     "\tmegadott azonositoju film torlese a gyujtemenybol\n\trst:\tminden film torlese a gyujtemenybol"
                     "\n\tment:\tfajlba irja a jelenlegi gyujtemenyt\n\tkilep:\tkilep a programbol" << endl;
         }
@@ -288,9 +323,8 @@ int main() {
         else {
             cout << "Hibas parancs" << endl;
         }
-        command = "";
     }
-    cout << "Bezarhatja a programot." << endl;
+    cout << "\nBezarhatja a programot." << endl;
 #endif
 
     return 0;
@@ -300,64 +334,75 @@ int main() {
 /** Film felvétele a gyűjteménybe a konzolon megadott adatokból
  *
  * @param coll A gyűjtemény, amibe felvesszük a filmet
+ * @param exit A kilépést jelző bool, amit igazra állít,
+ * ha film hozzáadása során a felhasználó ki szeretne lépni
  */
-void add(Collection& coll) {
+void add(Collection& coll, bool& exit) {
     cout << "Adja meg a kivant tipust: 1 - Normal film, 2 - Csaladi film, 3 - Dokumentumfilm: ";
-    int category;
-    cin >> category;
+    string categorystr;
+    int category = 0;
 
-    if (category <= 0 || category > 3)
-        cout << "Ervenytelen tipus." << endl;
-    else {
-        string split[4];
-        cout << "A film cime: ";
-        // üres string és ékezetes string nem elfogadott
-        while (split[0].empty() || containsAccentedChar(split[0].c_str()))
-            getline(cin, split[0]);
+    while (category < 1 || category > 3) {
+        cin >> categorystr;
+        category = atoi(categorystr.c_str());
+        if (category < 1 || category > 3)
+            cout << "Ervenytelen tipus." << endl;
+    }
+    string split[4];
+    cout << "A film cime: ";
+    // üres string és ékezetes string nem elfogadott, EOF esetén kilépünk
+    while (split[0].empty() || containsAccentedChar(split[0].c_str())) {
+        getline(cin, split[0]);
+        if ((exit = cin.eof())) { return; }
+    }
 
-        cout << "Hossza percben: ";
-        cin >> split[1];
-        cout << "Kiadasi eve: ";
-        cin >> split[2];
-        unsigned int runningTime = strtoul(split[1].c_str(), NULL, 10);
-        unsigned int releaseYear = strtoul(split[2].c_str(), NULL, 10);
-        if (runningTime == 0 || releaseYear == 0) {
-            cout << "Hibas bemenet. A megadott adatokat nem lehetett szamma alakitani. Probalja ujra." << endl;
-            category = -1;
+    cout << "Hossza percben: ";
+    if ((exit = cout.eof())) { return; }
+    cin >> split[1];
+    cout << "Kiadasi eve: ";
+    if ((exit = cout.eof())) { return; }
+    cin >> split[2];
+    unsigned int runningTime = strtoul(split[1].c_str(), NULL, 10);
+    unsigned int releaseYear = strtoul(split[2].c_str(), NULL, 10);
+    if (runningTime == 0 || releaseYear == 0) {
+        cout << "Hibas bemenet. A megadott adatokat nem lehetett szamma alakitani. Probalja ujra." << endl;
+        category = -1;
+    }
+
+    switch (category) {
+        case 1: {
+            Movie* mv = new Movie(split[0], runningTime, releaseYear);
+            coll.add(mv);
+            break;
         }
-
-        switch (category) {
-            case 1: {
-                Movie* mv = new Movie(split[0], runningTime, releaseYear);
-                coll.add(mv);
-                break;
+        case 2: {
+            int ageRating;
+            cout << "Korhatar-besorolasa: ";
+            cin >> ageRating;
+            Rating rating = Rating(ageRating);
+            // érvénytelen besorlás kezelése
+            if (rating != unrated && rating != ages6AndUp && rating != ages12AndUp &&
+                rating != ages16AndUp && rating != ages18AndUp && rating != allAges) {
+                cout << "Ervenytelen besorolas-kategoria. A film korhatara \"nem minositett\" lesz." << endl;
+                rating = unrated;
             }
-            case 2: {
-                int ageRating;
-                cout << "Korhatar-besorolasa: ";
-                cin >> ageRating;
-                Rating rating = Rating(ageRating);
-                // érvénytelen besorlás kezelése
-                if (rating != unrated && rating != ages6AndUp && rating != ages12AndUp &&
-                    rating != ages16AndUp && rating != ages18AndUp && rating != allAges) {
-                    cout << "Ervenytelen besorolas-kategoria. A film korhatara \"nem minositett\" lesz." << endl;
-                    rating = unrated;
-                }
-                Family *mv = new Family(split[0], runningTime, releaseYear, rating);
-                coll.add(mv);
-                break;
-            }
-            case 3: {
-                cout << "Leirasa: ";
-                while (split[3].empty()) // üres string nem elfogadott
-                    getline(cin, split[3]);
-                Documentary* mv = new Documentary(split[0], runningTime, releaseYear, split[3]);
-                coll.add(mv);
-            }
-            // érvénytelen filmtípus megadása esetén
-            default:
-                break;
+            Family *mv = new Family(split[0], runningTime, releaseYear, rating);
+            coll.add(mv);
+            break;
         }
+        case 3: {
+            cout << "Leirasa: ";
+            // üres string nem elfogadott, EOF-nál kilépünk
+            while (split[3].empty()) {
+                getline(cin, split[3]);
+                if ((exit = cin.eof())) { return; }
+            }
+            Documentary* mv = new Documentary(split[0], runningTime, releaseYear, split[3]);
+            coll.add(mv);
+        }
+        // érvénytelen filmtípus megadása esetén
+        default:
+            break;
     }
 }
 
