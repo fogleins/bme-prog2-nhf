@@ -4,6 +4,11 @@
 
 #include "collection.h"
 
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
+
 /** Elem felvétele a gyűjteménybe
  *
  * @param mv A felveendő objektum
@@ -23,7 +28,7 @@ void Collection::add(Movie& mv) {
             movies.addElement(mv);
         }
     }
-    catch (bad_alloc& e) {
+    catch (std::bad_alloc& e) {
         cerr << "A memoriafoglalas nem sikerult: " << e.what() << endl;
     }
 }
@@ -44,13 +49,13 @@ void Collection::remove(unsigned int index) {
     try {
         movies.removeElement(index);
     }
-    catch (out_of_range& indexError) {
+    catch (std::out_of_range& indexError) {
         cerr << indexError.what() << endl;
     }
-    catch (runtime_error& runtimeError) {
+    catch (std::runtime_error& runtimeError) {
         cerr << runtimeError.what() << endl;
     }
-    catch (bad_alloc& memError) {
+    catch (std::bad_alloc& memError) {
         cerr << "A memoriafoglalas nem sikerult: " << memError.what() << endl;
     }
 }
@@ -59,7 +64,7 @@ void Collection::remove(unsigned int index) {
  *
  * @param os Az az ostream, amire az eredményt írjuk
  */
-void Collection::print(ostream& os) {
+void Collection::print(std::ostream& os) {
     os << "ID\tCim\tHossz\tEv\tKategoria\tEgyeb" << endl;
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
         movies[i]->print();
@@ -88,12 +93,13 @@ void Collection::print(unsigned int index) {
 /** Keresés a filmek címei között
  *
  * @param keyword A keresendő kifejezés
+ * @param os Az ostream, amire a kimenetet írjuk
  */
-void Collection::search(const string& keyword, ostream& os) {
+void Collection::search(const string& keyword, std::ostream& os) {
     bool result = false; // ha volt már találat, akkor true lesz
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
         size_t found = movies[i]->getTitle().find(keyword);
-        if (found != (unsigned) -1) {
+        if (found != unsigned(-1)) {
             if (!result)
                 os << "Kereses - \"" << keyword << "\":\nID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
             movies[i]->print(os);
@@ -106,19 +112,12 @@ void Collection::search(const string& keyword, ostream& os) {
 }
 
 /** Az összes elem törlése a gyűjteményből */
-void Collection::clear() { // TODO: dtorral?
+void Collection::clear() {
     try {
-        // Hátulról indul, így nem kell minden egyes törlés után áthelyezni az elemeket
-        // A 0. indexű elem elérése miatt >= 0 kell, de ha -1 lesz, az unsigned int átfordul, ezért ezt is ellenőrizni kell
-        for (unsigned int i = movies.getElementCount() - 1; i >= 0 && i < (unsigned) -1; --i) {
-            movies.removeElement(i);
-        }
-        cerr << "Gyujtemeny torlese sikeres." << endl;
+        movies = Data<Movie>(); // új, 0 elemű Data-t kap
+        cout << "Gyujtemeny torlese sikeres." << endl;
     }
-    catch (out_of_range& indexError) {
-        cerr << indexError.what() << endl;
-    }
-    catch (bad_alloc& memError) {
+    catch (std::bad_alloc& memError) {
         cerr << "A memoriafoglalas nem sikerult: " << memError.what() << endl;
     }
 }
@@ -129,17 +128,17 @@ void Collection::clear() { // TODO: dtorral?
  */
 void Collection::readFile(const char* path) {
     try {
-        ifstream inputTxt;
+        std::ifstream inputTxt;
         inputTxt.open(path);
         if (!inputTxt) {
-            throw ios_base::failure("Hiba a fajl megnyitasa soran");
+            throw std::ios_base::failure("Hiba a fajl megnyitasa soran");
         }
         string line;
         string split[5]; // A darabolt sort ebbe a tömbbe rakjuk
 
         while (!inputTxt.eof()) { // fájl végéig megy
             getline(inputTxt, line);
-            istringstream oneLine(line);
+            std::istringstream oneLine(line);
             for (int i = 0; !oneLine.eof(); ++i) { // a beolvasott sor darabolása
                 getline(oneLine, split[i], ';');
             }
@@ -164,7 +163,7 @@ void Collection::readFile(const char* path) {
         }
         inputTxt.close();
     }
-    catch (ios_base::failure& ioerror) {
+    catch (std::ios_base::failure& ioerror) {
         cerr << ioerror.what() << endl;
     }
 }
@@ -175,16 +174,16 @@ void Collection::readFile(const char* path) {
  */
 void Collection::writeFile(const char* path) {
     try {
-        ofstream outputTxt(path);
+        std::ofstream outputTxt(path);
         if (!outputTxt)
-            throw ios_base::failure("A fajlba iras sikertelen");
+            throw std::ios_base::failure("A fajlba iras sikertelen");
         for (unsigned i = 0; i < movies.getElementCount(); ++i) {
             movies[i]->print(outputTxt, true);
             outputTxt << endl;
         }
         outputTxt.close();
     }
-    catch (ios_base::failure& ioerror) {
+    catch (std::ios_base::failure& ioerror) {
         cerr << ioerror.what() << endl;
     }
 }

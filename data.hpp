@@ -7,7 +7,6 @@
 
 #include <iostream>
 
-using namespace std;
 
 /** @class Data data.hpp
  *  @brief Dinamikus heterogén kollekció kezelő osztály
@@ -23,7 +22,7 @@ class Data {
     unsigned int elementCount; /**< A tárolt elemek száma */
     T** array; /**< A dinamikusan foglalt tömbre mutató pointer */
 public:
-    /** Konstruktor */
+    /** Paraméter nélküli konstruktor */
     Data<T>() {
         elementCount = 0;
         array = new T*[elementCount];
@@ -77,7 +76,7 @@ public:
      */
     void removeElement(unsigned int id) {
         if (elementCount <= id)
-            throw out_of_range("Torles: A megadott azonositoju elem nem letezik.\n");
+            throw std::out_of_range("Torles: A megadott azonositoju elem nem letezik.\n");
 
         elementCount -= 1;
         T** newArray = new T*[elementCount];
@@ -96,9 +95,10 @@ public:
 
     /** Elem törlése a tömbből
      *  @note Ha a memóriafoglalás nem sikerül, std::bad_alloc kivétel kerül dobásra,
-     *  amit a hívónak kell kezelnie
+     *  amit a hívónak kell kezelnie.
      *
-     * @param elementToRemove A törlendő elem referenciája
+     *  @param elementToRemove A törlendő elem referenciája
+     *  @throws std::runtime_error, ha a paraméterként megadott elem nem található a tömbben
      */
     void removeElement(T& elementToRemove) {
         for (unsigned int i = 0; i < elementCount; ++i) {
@@ -107,19 +107,18 @@ public:
                 return;
             }
         }
-        throw runtime_error("A megadott elem nem szerepel a tombben.");
+        throw std::runtime_error("A megadott elem nem szerepel a tombben.");
     }
 
     /** Indexelő operator
      *
      * @param index A keresett elem indexere
      * @return A tömb indexedik eleme, T típusú referencia
-     * @throws std::out_of_range ha a megadott elem túlmutat
-     * a tömb határain
+     * @throws std::out_of_range ha a megadott elem túlmutat a tömb határain
      */
     T*& operator[](unsigned int index) {
         if (index >= elementCount)
-            throw out_of_range("A megadott indexu elem nem letezik.");
+            throw std::out_of_range("A megadott indexu elem nem letezik.");
         return array[index];
     }
 
@@ -129,9 +128,16 @@ public:
      * @return Az rhs-sel megegyező tulajdonságú Data&
      */
     Data& operator=(Data rhs) {
-        for (unsigned int i = 0; i < rhs.elementCount; ++i) {
-            array[i] = rhs.array[i];
+        // ha a két tömb mérete nem egyezik meg, felszabadítjuk a foglalt memóriát
+        // és megfelelő méretűt foglalunk
+        if (elementCount != rhs.elementCount) {
+            for (unsigned int i = 0; i < elementCount; ++i)
+                delete array[i];
+            delete[] array;
+            array = new T*[rhs.elementCount];
         }
+        for (unsigned int i = 0; i < rhs.elementCount; ++i)
+            array[i] = rhs.array[i];
         elementCount = rhs.elementCount;
         return *this;
     }
