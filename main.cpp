@@ -18,7 +18,7 @@ using std::stringstream;
 // JPORTÁN VALÓ FUTTATÁSHOZ DEFINIÁLNI KELL
 // a konzolos inputhoz és a felhaszálói oldalról
 // való teszteléshez definiálatlannak kell lennie
-#define JPORTA
+//#define JPORTA
 
 #ifndef JPORTA
 void add(Collection& coll);
@@ -28,13 +28,12 @@ bool containsAccentedChar(const char* str);
 
 int main() {
 #ifdef JPORTA // tesztesetek
-    // TODO: teszt 1 ok
     // konstruktorok teszelése
     TEST(movies, ctors) {
         stringstream t1, t2, t3, pnelkul;
-        Movie* test1mv = new Movie("1917", 119, 2019);
-        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
+        Movie* movie = new Movie("1917", 119, 2019);
+        Family* family = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* documentary = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
@@ -43,131 +42,129 @@ int main() {
         paramnelkul.print(pnelkul, true);
         EXPECT_STREQ("1;;0;0;", pnelkul.str().c_str());
         // copy ctor
-        Movie test1copy = *test1mv;
-        EXPECT_EQ(test1mv->getReleaseYear(), test1copy.getReleaseYear());
+        Movie copy = *movie;
+        EXPECT_EQ(movie->getReleaseYear(), copy.getReleaseYear());
         // ha nincs gyűjteményhez adva, az id 0
-        test1mv->print(t1);
-        test2mv->print(t2);
-        test3mv->print(t3);
+        movie->print(t1);
+        family->print(t2);
+        documentary->print(t3);
         EXPECT_STREQ("0\t1917\t119 perc\t2019\tMovie", t1.str().c_str());
         EXPECT_STREQ("0\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", t2.str().c_str());
         EXPECT_STREQ("0\tFree solo\t97 perc\t2018\tDocumentary\tLeiras: Professional rock climber Alex Honnold "
                      "attempts to conquer the first free solo climb of famed El Capitan's 900-metre vertical rock face "
                      "at Yosemite National Park.", t3.str().c_str());
+        delete movie;
+        delete family;
+        delete documentary;
     } ENDM
 
-    // TODO: split?
-    // gyűjteményhez adás és kiírás
-    TEST(collection, addAndPrint) {
-        Movie* test1mv = new Movie("1917", 119, 2019);
-        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
-                                                   "Alex Honnold attempts to conquer the first free solo climb of "
-                                                   "famed El Capitan's 900-metre vertical rock face at Yosemite "
-                                                   "National Park.");
-
-//        // gyűjteményhez adjuk, hogy kapjon id-t
-//        Collection coll;
-//        coll.add(test1mv);
-//        coll.add(test2mv);
-//        test2mv->print(t2);
-//        EXPECT_STREQ("1\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", t2.str().c_str());
-//
-//        // fájlba írás
-//        test3mv->print(t3, true);
-//        EXPECT_STREQ("1;Free solo;97;2018;Professional rock climber Alex Honnold attempts to conquer the "
-//                     "first free solo climb of famed El Capitan's 900-metre vertical rock face at "
-//                     "Yosemite National Park.", t3.str().c_str());
-//        // test1mv és test2mv gyűjteményhez lett adva, azt a dtor felszabadítja
-//        delete test3mv;
-//
-        Collection coll;
+    // a gyűjtemény teszteléséhez ezeket használjuk
+    Collection tcoll;
+    Movie* tmovie = new Movie("1917", 119, 2019);
+    Family* tfamily = new Family("Frozen 2", 103, 2019, ages6AndUp);
+    Documentary* tdocumentary = new Documentary("Free solo", 97, 2018, "Professional rock climber "
+                                                                       "Alex Honnold attempts to conquer the first free solo climb of "
+                                                                       "famed El Capitan's 900-metre vertical rock face at Yosemite "
+                                                                       "National Park.");
+    // üres gyűjtemény kiírása
+    TEST(collection, printEmpty) {
+        EXPECT_EQ(unsigned(0) , tcoll.getMovies().getElementCount());
         stringstream ss;
-        coll.print(ss); // üres gyűjtemény kiírása
-        EXPECT_EQ((unsigned) 0, coll.getMovies().getElementCount());
+        tcoll.print(ss);
         EXPECT_STREQ("ID\tCim\tHossz\tEv\tKategoria\tEgyeb\n\n", ss.str().c_str());
+    } ENDM
 
-        // filmek gyűjteményhez adása pointerrel és referenciával
-        coll.add(test1mv);
-        coll.add(test2mv);
-        coll.add(*test3mv);
-        EXPECT_EQ((unsigned) 3, coll.getMovies().getElementCount());
+    // gyűjteményhez adás és kiírás
+    TEST(collection, add) {
+        stringstream tfamilyss, tmoviess;
+        // gyűjteményhez adjuk, hogy kapjon id-t
+        tcoll.add(tdocumentary);
+        tcoll.add(*tfamily); // referenciával is lehet
+        tcoll.add(tmovie);
+        tfamily->print(tfamilyss);
+        tmovie->print(tmoviess);
+        EXPECT_STREQ("1\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", tfamilyss.str().c_str());
+        EXPECT_STREQ("2\t1917\t119 perc\t2019\tMovie", tmoviess.str().c_str());
 
-        stringstream t1, t2, t3;
-        test1mv->print(t1);
-        EXPECT_STREQ("0\t1917\t119 perc\t2019\tMovie", t1.str().c_str());
-        test2mv->print(t2);
-        EXPECT_STREQ("1\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", t2.str().c_str());
-        // fájlba író mód
-        test3mv->print(t3, true);
-        EXPECT_STREQ("1;Free solo;97;2018;Professional rock climber Alex Honnold attempts to conquer the "
-                     "first free solo climb of famed El Capitan's 900-metre vertical rock face at "
-                     "Yosemite National Park.", t3.str().c_str());
+    } ENDM
 
+    TEST(collection, checkDuplicate) {
         // Ha azonos tulajdonságú filmet próbálunk hozzáadni a gyűjteményhez, akkor azt a duplikációk elkerülése
         // érdekében nem adja hozzá, így a hozzáadás előtti-utáni elemszám megegyezik
-        EXPECT_EQ((unsigned) 3, coll.getMovies().getElementCount());
-        Documentary* mv3copy = test3mv;
-        coll.add(mv3copy);
-        EXPECT_EQ((unsigned) 3, coll.getMovies().getElementCount());
-        // objektumok által foglalt memóriát a gyűjtemény szabadítja fel
+        EXPECT_EQ(unsigned(3), tcoll.getMovies().getElementCount());
+        Documentary* mv3copy = tdocumentary;
+        tcoll.add(mv3copy);
+        EXPECT_EQ(unsigned(3), tcoll.getMovies().getElementCount());
     } ENDM
 
-    // TODO: operátortesztelés ok
+    TEST(collection, removeElement) {
+        tcoll.remove(0);
+        EXPECT_EQ(unsigned(2), tcoll.getMovies().getElementCount());
+        // ez a foglalt memóriaterületet is felszabadítja, így itt már nem kell felszabadítani
+        // a fent foglalt objektumok által foglalt memóriát
+    } ENDM
+
+    // a teljes gyűjtemény törlése
+    TEST(collection, clear) {
+        EXPECT_EQ(unsigned(2), tcoll.getMovies().getElementCount());
+        tcoll.clear();
+        EXPECT_EQ(unsigned (0), tcoll.getMovies().getElementCount());
+    } ENDM
+
     // a filmek operator= és operator== függvényeinek tesztelése
     TEST(movies, operators) {
-        Movie* test1mv = new Movie("1917", 119, 2019);
-        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
+        Movie* movie = new Movie("1917", 119, 2019);
+        Family* family = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* documentary = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
-        Movie* test1copy = test1mv;
-        Family test2copy = *test2mv;
-        Documentary test3copy = *test3mv;
+        Movie movieCopy;
+        movieCopy = *movie;
+        Family familyCopy;
+        familyCopy = *family;
+        Documentary docCopy;
+        docCopy= *documentary;
 
-        EXPECT_EQ(false, *test1mv == *test2mv);
-        EXPECT_EQ(false, *test3mv == *test1mv);
-        EXPECT_EQ(false, *test1mv == *test3mv);
-        EXPECT_EQ(false, test3mv == &test3copy); // deep copyt csinál
-        EXPECT_EQ(true, *test1mv == *test1copy);
-        EXPECT_EQ(true, *test2mv == test2copy);
-        EXPECT_EQ(true, *test3mv == test3copy);
-        delete test1mv;
-        delete test2mv;
-        delete test3mv;
+        EXPECT_EQ(false, *movie == *family);
+        EXPECT_EQ(false, *documentary == *movie);
+        EXPECT_EQ(false, *movie == *documentary);
+        EXPECT_EQ(false, documentary == &docCopy); // deep copyt csinál
+        EXPECT_EQ(true, *movie == movieCopy);
+        EXPECT_EQ(true, *family == familyCopy);
+        EXPECT_EQ(true, *documentary == docCopy);
+        delete movie;
+        delete family;
+        delete documentary;
     } ENDM
 
-    // TODO: nagyjából ok
     // a dobott kivételeket teszteli
     TEST(collection, exceptions) {
-        Movie* test1mv = new Movie("1917", 119, 2019);
-        Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
-        Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
+        Movie* movie = new Movie("1917", 119, 2019);
+        Family* family = new Family("Frozen 2", 103, 2019, ages6AndUp);
+        Documentary* documentary = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
         // gyűjtemény feltöltése
         Collection coll;
-        coll.add(test1mv);
-        coll.add(test2mv);
-        coll.add(test3mv);
+        coll.add(movie);
+        coll.add(family);
+        coll.add(documentary);
+        EXPECT_EQ(unsigned(3) , coll.getMovies().getElementCount());
 
         // indexelő operátor tesztelése
-        EXPECT_EQ((unsigned) 3, coll.getMovies().getElementCount());
-        EXPECT_EQ((unsigned) 119, coll.getMovies()[0]->getRunningTime());
+        EXPECT_EQ(unsigned (119), coll.getMovies()[0]->getRunningTime());
         EXPECT_ANY_THROW(coll.getMovies()[15]); // túlindexelés
+        EXPECT_ANY_THROW(coll.getMovies()[-15]); // túlindexelés
         EXPECT_NO_THROW(coll.getMovies()[2]);
         // törlés
         EXPECT_ANY_THROW(coll.getMovies().removeElement(5)); // túlindexelés
         EXPECT_NO_THROW(coll.getMovies().removeElement(2));
-        // a teljes gyűjtemény törlése
-        EXPECT_EQ((unsigned) 2, coll.getMovies().getElementCount());
-        coll.clear();
-        EXPECT_EQ((unsigned) 0, coll.getMovies().getElementCount());
+        // documentary-t kitöröltük, így nem található a gyűjteményben
+        EXPECT_ANY_THROW(coll.getMovies().removeElement(*documentary));
     } ENDM
 
-    // TODO: ok
     // keresés a gyűjteményben
     TEST(collection, search) {
         Collection coll;
@@ -190,7 +187,7 @@ int main() {
                      "rock face.\n",ss2.str().c_str());
     } ENDM
 
-    // TODO: ok
+    // fájlbeolvasás tesztelése
     TEST(collection, readFile) {
         Collection coll;
         coll.readFile("./teszt.txt");
@@ -220,33 +217,44 @@ int main() {
             add(coll);
         }
         else if (command.find("keres") == 0) {
-            string kw = command.substr(6);
-            coll.search(kw);
+            if (command.length() <= 6)
+                cout << "A parancs utan adja meg a keresett kifejezest is!" << endl;
+            else {
+                string kw = command.substr(6);
+                coll.search(kw);
+            }
         }
         // beolvasás fájlból
         else if (command.find('p') == 0) {
-            string path = command.substr(2);
-            // különleges karaktereket tartalmazó elérési út esetén
-            // hibaüzenetet adunk és nem olvassuk be a fájlt
-            if (!containsAccentedChar(path.c_str()))
-                coll.readFile(path.c_str());
+            if (command.length() <= 2)
+                cout << "A parancs utan adja meg a fajl eleresi utjat is!" << endl;
+            else {
+                string path = command.substr(2);
+                // különleges karaktereket tartalmazó elérési út esetén
+                // hibaüzenetet adunk és nem olvassuk be a fájlt
+                if (!containsAccentedChar(path.c_str()))
+                    coll.readFile(path.c_str());
+            }
         }
         else if (command == "ls") {
             coll.print();
         }
         else if (command.find("rm") == 0) {
-            string quit;
-            unsigned int id = strtoul(command.substr(3).c_str(), NULL, 10);
-            // érvénytelen karakter esetén az strtoul() 0-t ad
-            if (id == 0) {
-                cout << "Lehetseges, hogy nem megfelelo azonositot adott meg. Erositse meg, hogy valoban az elso, "
-                        "0 azonositoju filmet szeretne torolni. Minden nem \"igen\" valasz nem-nek szamit. (igen/nem): "
-                        << endl;
-                cin >> quit;
-                if (quit.find("igen") != (unsigned) -1)
-                    coll.remove(id);
+            if (command.length() >= 4) { // ha nem adott meg id-t
+                string quit;
+                unsigned int id = strtoul(command.substr(3).c_str(), NULL, 10);
+                // érvénytelen karakter esetén az strtoul() 0-t ad
+                if (id == 0) {
+                    cout << "Lehetseges, hogy nem megfelelo azonositot adott meg. Erositse meg, hogy valoban az elso, "
+                            "0 azonositoju filmet szeretne torolni. Minden nem \"igen\" valasz nem-nek szamit. (igen/nem): "
+                         << endl;
+                    cin >> quit;
+                    if (quit.find("igen") != unsigned(-1))
+                        coll.remove(id);
+                } else coll.remove(id);
             }
-            else coll.remove(id);
+            else
+                cout << "Adja meg a torlendo film azonositojat!" << endl;
         }
         else if (command == "rst") {
             string confirm;
@@ -307,7 +315,6 @@ void add(Collection& coll) {
         while (split[0].empty() || containsAccentedChar(split[0].c_str()))
             getline(cin, split[0]);
 
-        // if (containsAccentedChar(split[0].c_str())) { return; }
         cout << "Hossza percben: ";
         cin >> split[1];
         cout << "Kiadasi eve: ";
@@ -329,7 +336,7 @@ void add(Collection& coll) {
                 int ageRating;
                 cout << "Korhatar-besorolasa: ";
                 cin >> ageRating;
-                Rating rating = (Rating) ageRating;
+                Rating rating = Rating(ageRating);
                 // érvénytelen besorlás kezelése
                 if (rating != unrated && rating != ages6AndUp && rating != ages12AndUp &&
                     rating != ages16AndUp && rating != ages18AndUp && rating != allAges) {
