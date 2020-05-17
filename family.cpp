@@ -4,6 +4,10 @@
 
 #include "family.h"
 
+using std::cout;
+using std::string;
+using std::ostream;
+
 /** Értékadás operator overloadja Family típusra
  *
  * @param rhs A jobboldali operandus
@@ -22,7 +26,7 @@ Family& Family::operator=(const Family& rhs) {
 /** Egyenlőségvizsgálat-operator overloadja Family típusra
  *
  * @param rhs A jobboldali operandus
- * @return True, ha a két film megegyezik
+ * @return Igaz, ha a két film megegyezik
  */
 bool Family::operator==(const Family &rhs) const {
     if (this == &rhs)

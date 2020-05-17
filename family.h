@@ -7,7 +7,6 @@
 
 #include "movie.h"
 
-using namespace std;
 
 /** Korhatár-besorolások */
 enum Rating {
@@ -19,7 +18,9 @@ enum Rating {
     ages18AndUp = 18 /**< 18 éven felülieknek */
 };
 
-/** Családi film osztály */
+/** @class Family family.h
+ *  @brief Családi film típust megvalósító osztály
+ */
 class Family : public Movie {
     Rating ageRating; /**< A film korhatár-besorolása */
 public:
@@ -30,11 +31,11 @@ public:
      * @param _releaseYear A film megjelenési éve
      * @param _rating A film korhatár-besorolása
      */
-    Family(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, Rating _rating = unrated)
+    Family(const std::string& _title, unsigned int _runningTime, unsigned int _releaseYear, Rating _rating = unrated)
         : Movie(_title, _runningTime, _releaseYear, FamilyE), ageRating(_rating) { }
 
-    /** Alapértelmezett konstruktor */
-    Family(): Movie(), ageRating(unrated) { }
+    /** Paraméter nélküli konstruktor */
+    Family(): Movie(), ageRating(unrated) { setCategory(FamilyE); }
 
     /** Másoló konstruktor
      *
@@ -47,21 +48,25 @@ public:
     /** Destruktor */
     ~Family() { }
 
-    string getCategoryStr() const {
+    /** @return A kategória megnevezése */
+    std::string getCategoryStr() const {
         return "Family";
     }
 
-    /** Getter függvény a korhatár-besorolás visszaadására
-     *
-     * @return A film korhatár-besorolása
-     */
-    Rating getAgeRating() {
+    /** @return A családi film korhatár-besorolása */
+    Rating getAgeRating() const {
         return ageRating;
     }
 
-    void print(ostream& os = cout, bool file = false) const;
+    void print(std::ostream& os = std::cout, bool file = false) const;
     Family& operator=(const Family& rhs);
     bool operator==(const Family& rhs) const;
+
+    /** Egyenlőségvizsgálat-operator overloadja Family és Movie típusra
+     *
+     * @param rhs A jobboldali, Movie típusú objektum
+     * @return Hamis, mert két különböző típusú film tulajdonságai nem egyezhetnek
+     */
     bool operator==(const Movie& rhs) const {
         return false;
     }

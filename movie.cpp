@@ -4,6 +4,10 @@
 
 #include "movie.h"
 
+using std::cout;
+using std::string;
+using std::ostream;
+
 /** Értékadás operator overloadja Movie típusra
  *
  * @param rhs A jobboldali operandus
@@ -22,7 +26,7 @@ Movie& Movie::operator=(const Movie& rhs) {
 /** Egyenlőségvizsgálat-operator overloadja Movie típusra
  *
  * @param rhs A jobboldali operandus
- * @return True, ha a két film megegyezik
+ * @return Igaz, ha a két film megegyezik
  */
 bool Movie::operator==(const Movie& rhs) const {
     if (this == &rhs)

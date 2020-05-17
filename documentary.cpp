@@ -4,6 +4,10 @@
 
 #include "documentary.h"
 
+using std::cout;
+using std::string;
+using std::ostream;
+
 /** Értékadás operator overloadja Documentary típusra
  *
  * @param rhs A jobboldali operandus
@@ -22,7 +26,7 @@ Documentary& Documentary::operator=(const Documentary& rhs) {
 /** Egyenlőségvizsgálat-operator overloadja Documentary típusra
  *
  * @param rhs A jobboldali operandus
- * @return True, ha a két film megegyezik
+ * @return Igaz, ha a két film megegyezik
  */
 bool Documentary::operator==(const Documentary& rhs) const {
     if (this == &rhs)

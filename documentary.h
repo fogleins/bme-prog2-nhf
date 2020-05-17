@@ -7,21 +7,26 @@
 
 #include "movie.h"
 
+
+/** @class Documentary documentary.h
+ *  @brief A dokumentumfilm típust megvalósító osztály
+ */
 class Documentary : public Movie {
-    string description;
+    std::string description;
 public:
     /** A dokumentumfilm osztály konstruktora
      *
      * @param _title A film címe
      * @param _runningTime A film hossza percben
      * @param _releaseYear A film kiadásának éve
-     * @param _description A film rövid leírása
+     * @param _description A film leírása
      */
-    Documentary(const string& _title, unsigned int _runningTime, unsigned int _releaseYear, const string& _description)
-        : Movie(_title, _runningTime, _releaseYear, DocumentaryE), description(_description) { }
+    Documentary(const std::string& _title, unsigned int _runningTime, unsigned int _releaseYear,
+            const std::string& _description) : Movie(_title, _runningTime, _releaseYear, DocumentaryE),
+            description(_description) { }
 
-    /** Alapértelmezett konstruktor */
-    Documentary(): Movie(), description("") { }
+    /** Paraméter nélküli konstruktor */
+    Documentary(): Movie(), description("") { setCategory(DocumentaryE); }
 
     /** Másoló konstruktor
      *
@@ -34,26 +39,24 @@ public:
     /** Destruktor */
     ~Documentary() { }
 
-    string getCategoryStr() const {
+    /** @return A kategória megnevezése */
+    std::string getCategoryStr() const {
         return "Documentary";
     }
 
-    /** Getter függvény a leírás visszaadására
-     *
-     * @return A dokumentumfilm leírása
-     */
-    string getDescription() {
+    /** @return A dokumentumfilm leírása */
+    std::string getDescription() const {
         return description;
     }
 
-    void print(ostream& os = cout, bool file = false) const;
-    Documentary& operator=(const Documentary& rhs) ;
+    void print(std::ostream& os = std::cout, bool file = false) const;
+    Documentary& operator=(const Documentary& rhs);
     bool operator==(const Documentary& rhs) const;
 
     /** Egyenlőségvizsgálat-operator overloadja Documentary és Movie típusra
      *
      * @param rhs A jobboldali, Movie típusú objektum
-     * @return False, mivel két különböző típusú film nem lehet azonos
+     * @return Hamis, mert két különböző típusú film tulajdonságai nem egyezhetnek
      */
     bool operator==(const Movie& rhs) const {
         return false;
