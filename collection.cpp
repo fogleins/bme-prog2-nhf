@@ -67,7 +67,7 @@ void Collection::remove(unsigned int index) {
 void Collection::print(std::ostream& os) {
     os << "ID\tCim\tHossz\tEv\tKategoria\tEgyeb" << endl;
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
-        movies[i]->print();
+        movies[i]->print(os);
         os << endl;
     }
     os << endl;
@@ -77,16 +77,16 @@ void Collection::print(std::ostream& os) {
  *
  * @param index A kiírandó elem indexere
  */
-void Collection::print(unsigned int index) {
+void Collection::print(unsigned int index, std::ostream& os) {
     try {
         if (index > movies.getElementCount())
             throw std::out_of_range("A megadott indexu elem nem letezik.");
-        cout << "ID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
-        movies[index]->print();
-        cout << endl;
+        os << "ID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
+        movies[index]->print(os);
+        os << endl;
     }
     catch (std::out_of_range& indexError) {
-        cerr << indexError.what() << endl;
+        os << indexError.what() << endl;
     }
 }
 
@@ -98,8 +98,9 @@ void Collection::print(unsigned int index) {
 void Collection::search(const string& keyword, std::ostream& os) {
     bool result = false; // ha volt már találat, akkor true lesz
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
-        size_t found = movies[i]->getTitle().find(keyword);
-        if (found != unsigned(-1)) {
+        string title = movies[i]->getTitle();
+        size_t found = title.find(keyword);
+        if (found >= unsigned(0) && found < title.length()) {
             if (!result)
                 os << "Kereses - \"" << keyword << "\":\nID\tCim\tHossz\tMegjelenes eve\tKategoria\tEgyeb" << endl;
             movies[i]->print(os);
@@ -108,7 +109,7 @@ void Collection::search(const string& keyword, std::ostream& os) {
         }
     }
     if (!result)
-        cerr << "Nem talalhato a keresesi feltetelnek megfelelo cimu film a gyujtemenyben." << endl;
+        os << "Nem talalhato a keresesi feltetelnek megfelelo cimu film a gyujtemenyben." << endl;
 }
 
 /** Az összes elem törlése a gyűjteményből */
