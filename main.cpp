@@ -9,6 +9,12 @@
 #include "documentary.h"
 #include "collection.h"
 
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+using std::stringstream;
+
 // JPORTÁN VALÓ FUTTATÁSHOZ DEFINIÁLNI KELL
 // a konzolos inputhoz és a felhaszálói oldalról
 // való teszteléshez definiálatlannak kell lennie
@@ -22,37 +28,32 @@ bool containsAccentedChar(const char* str);
 
 int main() {
 #ifdef JPORTA // tesztesetek
-    // fájlba és konzolra írás tesztelése mindegyik filmtípuson
+    // TODO: teszt 1 ok
+    // konstruktorok teszelése
     TEST(movies, ctors) {
-        stringstream t1, t2, t3;
+        stringstream t1, t2, t3, pnelkul;
         Movie* test1mv = new Movie("1917", 119, 2019);
         Family* test2mv = new Family("Frozen 2", 103, 2019, ages6AndUp);
         Documentary* test3mv = new Documentary("Free solo", 97, 2018, "Professional rock climber "
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
+        // paraméter nélküli ctor
+        Documentary paramnelkul;
+        paramnelkul.print(pnelkul, true);
+        EXPECT_STREQ("1;;0;0;", pnelkul.str().c_str());
         // copy ctor
         Movie test1copy = *test1mv;
-        Movie test2copy = *test2mv; /* TODO */
         EXPECT_EQ(test1mv->getReleaseYear(), test1copy.getReleaseYear());
-        // konzolra írás függvényének tesztelése
+        // ha nincs gyűjteményhez adva, az id 0
         test1mv->print(t1);
-        // az id inicializálatlan (unsigned -1 = 4294967295)
-        EXPECT_STREQ("0\t1917\t119 perc\t2019\tMovie", t1.str().c_str());
-
-        // gyűjteményhez adjuk, hogy kapjon id-t
-        Collection coll;
-        coll.add(test2mv);
         test2mv->print(t2);
+        test3mv->print(t3);
+        EXPECT_STREQ("0\t1917\t119 perc\t2019\tMovie", t1.str().c_str());
         EXPECT_STREQ("0\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", t2.str().c_str());
-
-        // fájlba írás
-        test3mv->print(t3, true);
-        EXPECT_STREQ("1;Free solo;97;2018;Professional rock climber Alex Honnold attempts to conquer the "
-                     "first free solo climb of famed El Capitan's 900-metre vertical rock face at "
-                     "Yosemite National Park.", t3.str().c_str());
-        delete test1mv; // test2mv gyűjteményhez lett adva, azt a dtor felszabadítja
-        delete test3mv;
+        EXPECT_STREQ("0\tFree solo\t97 perc\t2018\tDocumentary\tLeiras: Professional rock climber Alex Honnold "
+                     "attempts to conquer the first free solo climb of famed El Capitan's 900-metre vertical rock face "
+                     "at Yosemite National Park.", t3.str().c_str());
     } ENDM
 
     // TODO: split?
@@ -64,6 +65,22 @@ int main() {
                                                    "Alex Honnold attempts to conquer the first free solo climb of "
                                                    "famed El Capitan's 900-metre vertical rock face at Yosemite "
                                                    "National Park.");
+
+//        // gyűjteményhez adjuk, hogy kapjon id-t
+//        Collection coll;
+//        coll.add(test1mv);
+//        coll.add(test2mv);
+//        test2mv->print(t2);
+//        EXPECT_STREQ("1\tFrozen 2\t103 perc\t2019\tFamily\tKorhatar-besorolas: 6", t2.str().c_str());
+//
+//        // fájlba írás
+//        test3mv->print(t3, true);
+//        EXPECT_STREQ("1;Free solo;97;2018;Professional rock climber Alex Honnold attempts to conquer the "
+//                     "first free solo climb of famed El Capitan's 900-metre vertical rock face at "
+//                     "Yosemite National Park.", t3.str().c_str());
+//        // test1mv és test2mv gyűjteményhez lett adva, azt a dtor felszabadítja
+//        delete test3mv;
+//
         Collection coll;
         stringstream ss;
         coll.print(ss); // üres gyűjtemény kiírása
@@ -248,7 +265,7 @@ int main() {
             cout << "Elerheto parancsok:\n\tuj:\tuj film felvetele a gyujtemenybe\n\tkeres:\tkereses filmek cimere "
                     "a gyujtemenyben\n\tp:\tgyujtemeny beolvasasa fajlbol\n\tls:\ta tarolt filmek kilistazasa\n\trm id:"
                     "\tmegadott azonositoju film torlese a gyujtemenybol\n\trst:\tminden film torlese a gyujtemenybol"
-                    "\n\tment: fajlba irja a jelenlegi gyujtemenyt\n\tkilep:\tkilep a programbol" << endl;
+                    "\n\tment:\tfajlba irja a jelenlegi gyujtemenyt\n\tkilep:\tkilep a programbol" << endl;
         }
         else if (command == "kilep") {
             string confirm;
@@ -355,7 +372,7 @@ string getCurrentTime() {
 /** Megvizsgálja, hogy egy bemenet érvényes-e, azaz nem tartalmaz meg nem engedett karaktereket
  *
  * @param str A karakterlánc, amit vizsgálunk
- * @return True, ha talált meg nem engedett karaktert, egyébként false
+ * @return Igaz, ha a string tartalmaz meg nem engedett karaktert, egyébként hamis
  */
 bool containsAccentedChar(const char* str) {
     for (int i = 0; str[i] != '\0' ; ++i) {
