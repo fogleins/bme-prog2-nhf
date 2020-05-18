@@ -15,6 +15,7 @@ using std::ostream;
  */
 Movie& Movie::operator=(const Movie& rhs) {
     if (this != &rhs) {
+        id = 0;
         title = rhs.title;
         runningTime = rhs.runningTime;
         releaseYear = rhs.releaseYear;

@@ -23,25 +23,20 @@ class Data {
     T** array; /**< A dinamikusan foglalt tömbre mutató pointer */
 public:
     /** Paraméter nélküli konstruktor */
-    Data<T>() {
-        elementCount = 0;
-        array = new T*[elementCount];
-    }
+    Data<T>() : elementCount(0), array(new T*[elementCount]) { }
 
     /** Másoló konstruktor
      *
      * @param from Az a Data típusú elem, amiből másolni szeretnénk az újba
      */
-    Data<T>(const Data& from) {
-        array = new T*[from.elementCount];
+    Data<T>(const Data& from) : elementCount(from.elementCount), array(new T*[elementCount]) {
         for (unsigned int i = 0; i < from.elementCount; ++i)
             array[i] = from.array[i];
-        elementCount = from.elementCount;
     }
 
     /** Destruktor */
     ~Data<T>() {
-        for (unsigned i = 0; i < elementCount; ++i)
+        for (unsigned int i = 0; i < elementCount; ++i)
             delete array[i];
         delete[] array;
     }
@@ -50,7 +45,7 @@ public:
      *
      * @return A tárolt elemek száma
      */
-    unsigned int getElementCount() {
+    unsigned int getElementCount() const {
         return elementCount;
     }
 
@@ -81,10 +76,8 @@ public:
         elementCount -= 1;
         T** newArray = new T*[elementCount];
         for (unsigned int i = 0; i < elementCount; ++i) {
-            if (i >= id) {
-                array[i]->setID(array[i]->getID() - 1);
+            if (i >= id)
                 newArray[i] = array[i + 1];
-            }
             else
                 newArray[i] = array[i];
         }
@@ -113,10 +106,22 @@ public:
     /** Indexelő operator
      *
      * @param index A keresett elem indexere
-     * @return A tömb indexedik eleme, T típusú referencia
+     * @return A tömb indexedik eleme
      * @throws std::out_of_range ha a megadott elem túlmutat a tömb határain
      */
     T*& operator[](unsigned int index) {
+        if (index >= elementCount)
+            throw std::out_of_range("A megadott indexu elem nem letezik.");
+        return array[index];
+    }
+
+    /** Konstans indexelő operátor
+     *
+     * @param index A keresett elem indexere
+     * @return A tömb indexedik eleme
+     * @throws std::out_of_range ha a megadott elem túlmutat a tömb határain
+     */
+    T* const& operator[](unsigned int index) const {
         if (index >= elementCount)
             throw std::out_of_range("A megadott indexu elem nem letezik.");
         return array[index];
@@ -128,17 +133,15 @@ public:
      * @return Az rhs-sel megegyező tulajdonságú Data&
      */
     Data& operator=(Data rhs) {
-        // ha a két tömb mérete nem egyezik meg, felszabadítjuk a foglalt memóriát
-        // és megfelelő méretűt foglalunk
-        if (elementCount != rhs.elementCount) {
+        if (this != &rhs) {
             for (unsigned int i = 0; i < elementCount; ++i)
                 delete array[i];
             delete[] array;
-            array = new T*[rhs.elementCount];
+            array = new T *[rhs.elementCount];
+            for (unsigned int i = 0; i < rhs.elementCount; ++i)
+                array[i] = rhs.array[i];
+            elementCount = rhs.elementCount;
         }
-        for (unsigned int i = 0; i < rhs.elementCount; ++i)
-            array[i] = rhs.array[i];
-        elementCount = rhs.elementCount;
         return *this;
     }
 };

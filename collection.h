@@ -35,12 +35,12 @@ public:
     void add(Movie& mv);
     void add(Movie* mv);
     void remove(unsigned int index);
-    void print(std::ostream& os = std::cout);
-    void print(unsigned int index, std::ostream& os = std::cout);
-    void search(const std::string& keyword, std::ostream& os = std::cout);
+    void print(std::ostream& os = std::cout) const;
+    void print(unsigned int index, std::ostream& os = std::cout) const;
+    void search(const std::string& keyword, std::ostream& os = std::cout) const;
     void clear();
     void readFile(const char* path);
-    void writeFile(const char* path);
+    void writeFile(const char* path) const;
 };
 
 

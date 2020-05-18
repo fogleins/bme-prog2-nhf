@@ -18,7 +18,7 @@ void Collection::add(Movie& mv) {
         bool duplicate = false;
         for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
             if (*movies[i] == mv) {
-                cerr << "Ezt a filmet mar hozzaadta a gyujtemenyhez, igy most nem lesz hozzaadva." << endl;
+                cout << "Ezt a filmet mar hozzaadta a gyujtemenyhez, igy most nem lesz hozzaadva." << endl;
                 duplicate = true;
                 break;
             }
@@ -48,6 +48,8 @@ void Collection::add(Movie *mv) {
 void Collection::remove(unsigned int index) {
     try {
         movies.removeElement(index);
+        for (unsigned int i = index; i < movies.getElementCount(); ++i)
+            movies[i]->setID(movies[i]->getID() - 1);
     }
     catch (std::out_of_range& indexError) {
         cerr << indexError.what() << endl;
@@ -64,7 +66,7 @@ void Collection::remove(unsigned int index) {
  *
  * @param os Az az ostream, amire az eredményt írjuk
  */
-void Collection::print(std::ostream& os) {
+void Collection::print(std::ostream& os) const {
     os << "ID\tCim\tHossz\tEv\tKategoria\tEgyeb" << endl;
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
         movies[i]->print(os);
@@ -77,7 +79,7 @@ void Collection::print(std::ostream& os) {
  *
  * @param index A kiírandó elem indexere
  */
-void Collection::print(unsigned int index, std::ostream& os) {
+void Collection::print(unsigned int index, std::ostream& os) const {
     try {
         if (index > movies.getElementCount())
             throw std::out_of_range("A megadott indexu elem nem letezik.");
@@ -95,7 +97,7 @@ void Collection::print(unsigned int index, std::ostream& os) {
  * @param keyword A keresendő kifejezés
  * @param os Az ostream, amire a kimenetet írjuk
  */
-void Collection::search(const string& keyword, std::ostream& os) {
+void Collection::search(const string& keyword, std::ostream& os) const {
     bool result = false; // ha volt már találat, akkor true lesz
     for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
         string title = movies[i]->getTitle();
@@ -173,12 +175,12 @@ void Collection::readFile(const char* path) {
  *
  * @param path A kimeneti fájl elérési útja
  */
-void Collection::writeFile(const char* path) {
+void Collection::writeFile(const char* path) const {
     try {
         std::ofstream outputTxt(path);
         if (!outputTxt)
             throw std::ios_base::failure("A fajlba iras sikertelen");
-        for (unsigned i = 0; i < movies.getElementCount(); ++i) {
+        for (unsigned int i = 0; i < movies.getElementCount(); ++i) {
             movies[i]->print(outputTxt, true);
             outputTxt << endl;
         }

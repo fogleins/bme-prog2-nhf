@@ -14,12 +14,14 @@ using std::ostream;
  * @return A jobboldali operandussal megegyező tulajdonságú Documentary&
  */
 Documentary& Documentary::operator=(const Documentary& rhs) {
-    setID(rhs.getID());
-    setTitle(rhs.getTitle());
-    setRunningTime(rhs.getRunningTime());
-    setReleaseYear(rhs.getReleaseYear());
-    description = rhs.description;
-    setCategory(rhs.getCategory());
+    if (this != &rhs) {
+        setID(0);
+        setTitle(rhs.getTitle());
+        setRunningTime(rhs.getRunningTime());
+        setReleaseYear(rhs.getReleaseYear());
+        description = rhs.description;
+        setCategory(rhs.getCategory());
+    }
     return *this;
 }
 
